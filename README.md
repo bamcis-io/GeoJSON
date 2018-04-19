@@ -57,11 +57,11 @@ Or you can create a GeoJSON object and serialize it:
 Each of the 9 GeoJSON types: **Feature**, **FeatureCollection**, **GeometryCollection**, **LineString**, **MultiLineString**, **MultiPoint**, **MultiPolygon**,
 **Point**, and **Polygon** all have convenience methods ToJson() and FromJson() to make serialization and deserialization easy.
 
-There are two additional types that can be used. A LinearRing is a LineString that is connected as the start and end and forms
-the basis of a polygon. You can also use the abstract Geometry class that encompasses LineString, MultiLineString, MultiPoint, MultiPolygon,
+There are two additional types that can be used. A **LinearRing** is a LineString that is connected as the start and end and forms
+the basis of a polygon. You can also use the abstract **Geometry** class that encompasses LineString, MultiLineString, MultiPoint, MultiPolygon,
 Point, and Polygon.
 
-The Feature 'Properties' property implements an `IDictionary<string, dynamic>` in order to accomodate any type of property structure that may 
+The Feature **'Properties'** property implements an `IDictionary<string, dynamic>` in order to accomodate any type of property structure that may 
 be sent.
 
 ## Revision History
