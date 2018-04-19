@@ -48,14 +48,14 @@ namespace BAMCIS.GeoJSON.Serde
 
             if (!Token.TryGetValue("type", StringComparison.OrdinalIgnoreCase, out JToken TypeToken))
             {
-                throw new InvalidOperationException("Invalid geojson object, does not have 'type' field.");
+                throw new JsonReaderException("Invalid geojson object, does not have 'type' field.");
             }
 
             Type ActualType = GeoJson.GetType(TypeToken.ToObject<GeoJsonType>(serializer));
 
             if (existingValue == null || existingValue.GetType() != ActualType)
             {
-                return Token.ToObject(ActualType, serializer);
+                return (GeoJson)Token.ToObject(ActualType, serializer);
             }
             else
             {

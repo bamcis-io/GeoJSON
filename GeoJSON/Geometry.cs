@@ -14,18 +14,8 @@ namespace BAMCIS.GeoJSON
     {
         #region Private Fields
 
-        private static readonly Dictionary<Type, GeometryType> TypeToDerivedType;
-        private static readonly Dictionary<GeometryType, Type> DerivedTypeToType;
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Overrides the base GeoJson and defines its own type
-        /// for the specific geometry
-        /// </summary>
-        public new GeometryType Type { get; }
+        private static readonly Dictionary<Type, GeoJsonType> TypeToDerivedType;
+        private static readonly Dictionary<GeoJsonType, Type> DerivedTypeToType;
 
         #endregion
 
@@ -36,15 +26,15 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         static Geometry()
         {
-            TypeToDerivedType = new Dictionary<Type, GeometryType>()
+            TypeToDerivedType = new Dictionary<Type, GeoJsonType>()
             {
-                { typeof(LineString), GeometryType.LineString },
-                { typeof(MultiLineString), GeometryType.MultiLineString },
-                { typeof(MultiPoint), GeometryType.MultiPoint },
-                { typeof(MultiPolygon), GeometryType.MultiPolygon },
-                { typeof(Point), GeometryType.Point },
-                { typeof(Polygon), GeometryType.Polygon },
-                { typeof(GeometryCollection), GeometryType.GeometryCollection },
+                { typeof(LineString), GeoJsonType.LineString },
+                { typeof(MultiLineString), GeoJsonType.MultiLineString },
+                { typeof(MultiPoint), GeoJsonType.MultiPoint },
+                { typeof(MultiPolygon), GeoJsonType.MultiPolygon },
+                { typeof(Point), GeoJsonType.Point },
+                { typeof(Polygon), GeoJsonType.Polygon },
+                { typeof(GeometryCollection), GeoJsonType.GeometryCollection },
             };
 
             DerivedTypeToType = TypeToDerivedType.ToDictionary(pair => pair.Value, pair => pair.Key);
@@ -55,14 +45,22 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="type"></param>
         [JsonConstructor]
-        protected Geometry(GeometryType type) : base(GeoJsonType.GEOMETRY)
+        protected Geometry(GeoJsonType type) : base(type)
         {
-            this.Type = type;
+            if (!DerivedTypeToType.ContainsKey(type))
+            {
+                throw new ArgumentException($"The type {type} is not a valid geometry type.");
+            }
         }
 
         #endregion
 
         #region Public Methods
+
+        public static new Geometry FromJson(string json)
+        {
+            return JsonConvert.DeserializeObject<Geometry>(json);
+        }
 
         /// <summary>
         /// Gets the appropriate class type corresponding to the enum
@@ -70,10 +68,41 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static Type GetType(GeometryType type)
+        public new static Type GetType(GeoJsonType type)
         {
-            return DerivedTypeToType[type];
+            if (DerivedTypeToType.ContainsKey(type))
+            {
+                return DerivedTypeToType[type];
+            }
+            else
+            {
+                throw new ArgumentException($"The type {type} is not a valid geometry type.");
+            }
         }
+
+        public static bool operator ==(Geometry left, Geometry right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (right is null || left is null)
+            {
+                return false;
+            }
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Geometry left, Geometry right)
+        {
+            return !(left == right);
+        }
+
+        public abstract override bool Equals(object obj);
+
+        public abstract override int GetHashCode();
 
         #endregion
     }

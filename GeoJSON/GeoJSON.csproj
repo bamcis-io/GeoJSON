@@ -3,13 +3,19 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>BAMCIS.GeoJSON</RootNamespace>
-    <Version>1.0.0.0</Version>
+    <Version>1.0.0</Version>
     <Authors>Michael Haken</Authors>
     <Company>bamcis.io</Company>
     <Description>A .NET Core library for serializing and deserializing GeoJSON formatted JSON data. Complies with RFC 7946.</Description>
     <Copyright>bamcis.io</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/bamcis-io/GeoJSON/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/bamcis-io/GeoJSON</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bamcis-io/GeoJSON</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>GeoJSON RFC7946</PackageTags>
+    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

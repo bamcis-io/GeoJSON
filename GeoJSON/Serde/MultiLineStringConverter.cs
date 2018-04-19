@@ -56,7 +56,7 @@ namespace BAMCIS.GeoJSON.Serde
             JToken.FromObject(new
             {
                 type = Mls.Type,
-                coordinates = Mls.Cooridnates.Select(x => x.Cooridnates)
+                coordinates = Mls.Coordinates.Select(x => x.Coordinates)
             }).WriteTo(writer);
         }
 

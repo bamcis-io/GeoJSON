@@ -1,6 +1,7 @@
 ﻿using BAMCIS.GeoJSON.Serde;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace BAMCIS.GeoJSON
 {
@@ -8,7 +9,7 @@ namespace BAMCIS.GeoJSON
     /// A GeoJSON position consisting of a longitude, latitude, and optional elevation
     /// </summary>
     [JsonConverter(typeof(PositionConverter))]
-    public class Position
+    public class Position : IPosition, IEquatable<Position>, IEqualityComparer<Position>
     {
         #region Public Properties
 
@@ -74,6 +75,11 @@ namespace BAMCIS.GeoJSON
 
         #region Public Methods
 
+        public static Position FromJson(string json)
+        {
+            return JsonConvert.DeserializeObject<Position>(json);
+        }
+
         /// <summary>
         /// Determines if an elevation has been provided for a position.
         /// </summary>
@@ -85,7 +91,7 @@ namespace BAMCIS.GeoJSON
 
         public override bool Equals(object obj)
         {
-            if (this == obj)
+            if (ReferenceEquals(this, obj))
             {
                 return true;
             }
@@ -97,9 +103,40 @@ namespace BAMCIS.GeoJSON
 
             Position Other = (Position)obj;
 
-            return this.Longitude == Other.Longitude &&
-                this.Latitude == Other.Latitude &&
-                this.Elevation == Other.Elevation;
+            bool Temp = this.Latitude == Other.Latitude &&
+               this.Longitude == Other.Longitude;
+
+            if (!double.IsNaN(this.Elevation) || !double.IsNaN(Other.Elevation))
+            {
+                Temp = Temp && (this.Elevation == Other.Elevation);
+            }
+
+            return Temp;
+        }
+
+        public bool Equals(Position other)
+        {
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            else
+            {
+                bool Temp = this.Latitude == other.Latitude &&
+                this.Longitude == other.Longitude;
+
+                if (!double.IsNaN(this.Elevation) || !double.IsNaN(other.Elevation))
+                {
+                    Temp = Temp && (this.Elevation == other.Elevation);
+                }
+
+                return Temp;
+            }
+        }
+
+        public bool Equals(Position left, Position right)
+        {
+            return left == right;
         }
 
         public override int GetHashCode()
@@ -110,6 +147,31 @@ namespace BAMCIS.GeoJSON
         public override string ToString()
         {
             return $"[{this.Longitude},{this.Latitude}{(!double.IsNaN(this.Elevation) ? $",{this.Elevation}" : "")}]";
+        }
+
+        public static bool operator ==(Position left, Position right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (right is null || left is null)
+            {
+                return false;
+            }
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Position left, Position right)
+        {
+            return !(left == right);
+        }
+
+        public int GetHashCode(Position other)
+        {
+            return other.GetHashCode();
         }
 
         #endregion

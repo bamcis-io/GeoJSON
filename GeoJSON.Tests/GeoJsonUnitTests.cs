@@ -14,11 +14,14 @@ namespace GeoJSON.Tests
             string Content = File.ReadAllText("multilinestring.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
 
             // ACT
-            MultiLineString Geo = JsonConvert.DeserializeObject<MultiLineString>(Content);
-            string Content2 = JsonConvert.SerializeObject(Geo);
+            MultiLineString Geo = MultiLineString.FromJson(Content);
+
+            string Content2 = Geo.ToJson();
+
+            MultiLineString Geo2 = MultiLineString.FromJson(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
         }
 
         [Fact]
@@ -30,9 +33,10 @@ namespace GeoJSON.Tests
             // ACT
             LineString Geo = JsonConvert.DeserializeObject<LineString>(Content);
             string Content2 = JsonConvert.SerializeObject(Geo);
+            LineString Geo2 = JsonConvert.DeserializeObject<LineString>(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
         }
 
         [Fact]
@@ -58,9 +62,10 @@ namespace GeoJSON.Tests
             // ACT
             Feature Geo = JsonConvert.DeserializeObject<Feature>(Content);
             string Content2 = JsonConvert.SerializeObject(Geo);
+            Feature Geo2 = JsonConvert.DeserializeObject<Feature>(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
         }
 
         [Fact]
@@ -72,9 +77,10 @@ namespace GeoJSON.Tests
             // ACT
             FeatureCollection Geo = JsonConvert.DeserializeObject<FeatureCollection>(Content);
             string Content2 = JsonConvert.SerializeObject(Geo);
+            FeatureCollection Geo2 = JsonConvert.DeserializeObject<FeatureCollection>(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
         }
 
         [Fact]
@@ -86,9 +92,25 @@ namespace GeoJSON.Tests
             // ACT
             Polygon Geo = JsonConvert.DeserializeObject<Polygon>(Content);
             string Content2 = JsonConvert.SerializeObject(Geo);
+            Polygon Geo2 = JsonConvert.DeserializeObject<Polygon>(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
+        }
+
+        [Fact]
+        public void PolygonWithHoleTest()
+        {
+            // ARRANGE
+            string Content = File.ReadAllText("polygonwithhole.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+
+            // ACT
+            Polygon Geo = JsonConvert.DeserializeObject<Polygon>(Content);
+            string Content2 = JsonConvert.SerializeObject(Geo);
+            Polygon Geo2 = JsonConvert.DeserializeObject<Polygon>(Content2);
+
+            // ASSERT
+            Assert.True(Geo.Equals(Geo2));
         }
 
         [Fact]
@@ -100,9 +122,10 @@ namespace GeoJSON.Tests
             // ACT
             Point Geo = JsonConvert.DeserializeObject<Point>(Content);
             string Content2 = JsonConvert.SerializeObject(Geo);
+            Point Geo2 = JsonConvert.DeserializeObject<Point>(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
         }
 
         [Fact]
@@ -114,9 +137,10 @@ namespace GeoJSON.Tests
             // ACT
             MultiPoint Geo = JsonConvert.DeserializeObject<MultiPoint>(Content);
             string Content2 = JsonConvert.SerializeObject(Geo);
+            MultiPoint Geo2 = JsonConvert.DeserializeObject<MultiPoint>(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
         }
 
         [Fact]
@@ -128,9 +152,10 @@ namespace GeoJSON.Tests
             // ACT
             GeometryCollection Geo = JsonConvert.DeserializeObject<GeometryCollection>(Content);
             string Content2 = JsonConvert.SerializeObject(Geo);
+            GeometryCollection Geo2 = JsonConvert.DeserializeObject<GeometryCollection>(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
         }
 
         [Fact]
@@ -154,11 +179,12 @@ namespace GeoJSON.Tests
             string Content = File.ReadAllText("feature.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
 
             // ACT
-            GeoJson Geo = JsonConvert.DeserializeObject<GeoJson>(Content);
-            string Content2 = JsonConvert.SerializeObject(Geo);
+            GeoJson Geo = GeoJson.FromJson(Content);
+            string Content2 = Geo.ToJson();
+            GeoJson Geo2 = GeoJson.FromJson(Content2);
 
             // ASSERT
-            Assert.Equal(Content, Content2, true, true, true);
+            Assert.True(Geo.Equals(Geo2));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The coordinates are an array of polygons.
         /// </summary>
-        public IEnumerable<Polygon> Cooridnates { get; }
+        public IEnumerable<Polygon> Coordinates { get; }
 
         #endregion
 
@@ -29,14 +29,67 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates"></param>
         [JsonConstructor]
-        public MultiPolygon(IEnumerable<Polygon> coordinates) : base(GeometryType.MultiPolygon)
+        public MultiPolygon(IEnumerable<Polygon> coordinates) : base(GeoJsonType.MultiPolygon)
         {
-            this.Cooridnates = coordinates ?? throw new ArgumentNullException("coordinates");
+            this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
 
-            if (!this.Cooridnates.Any())
+            if (!this.Coordinates.Any())
             {
                 throw new ArgumentOutOfRangeException("coordinates", "A MultiPolygon must have at least 1 polygon.");
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+        public static new MultiPolygon FromJson(string json)
+        {
+            return JsonConvert.DeserializeObject<MultiPolygon>(json);
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj == null || this.GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            MultiPolygon Other = (MultiPolygon)obj;
+
+            return this.Type == Other.Type &&
+                this.Coordinates.SequenceEqual(Other.Coordinates) &&
+                this.BoundingBox == Other.BoundingBox;
+        }
+
+        public override int GetHashCode()
+        {
+            return Hashing.Hash(this.Type, this.Coordinates, this.BoundingBox);
+        }
+
+        public static bool operator ==(MultiPolygon left, MultiPolygon right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (right is null || left is null)
+            {
+                return false;
+            }
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(MultiPolygon left, MultiPolygon right)
+        {
+            return !(left == right);
         }
 
         #endregion

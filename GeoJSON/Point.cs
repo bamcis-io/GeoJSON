@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BAMCIS.GeoJSON.Serde;
+using Newtonsoft.Json;
 using System;
 
 namespace BAMCIS.GeoJSON
@@ -6,6 +7,7 @@ namespace BAMCIS.GeoJSON
     /// <summary>
     /// For type "Point", the "coordinates" member is a single position.
     /// </summary>
+    [JsonConverter(typeof(InheritanceBlockerConverter))]
     public class Point : Geometry
     {
         #region Public Properties
@@ -24,7 +26,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates"></param>
         [JsonConstructor]
-        public Point(Position coordinates) : base(GeometryType.Point)
+        public Point(Position coordinates) : base(GeoJsonType.Point)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
         }
@@ -32,6 +34,11 @@ namespace BAMCIS.GeoJSON
         #endregion
 
         #region Public Methods
+
+        public static new Point FromJson(string json)
+        {
+            return JsonConvert.DeserializeObject<Point>(json);
+        }
 
         /// <summary>
         /// Gets the longitude or easting of the point
@@ -66,6 +73,50 @@ namespace BAMCIS.GeoJSON
 
             elevation = double.NaN;
             return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj == null || this.GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Point Other = (Point)obj;
+
+            return this.Type == Other.Type &&
+                this.Coordinates == Other.Coordinates &&
+                this.BoundingBox == Other.BoundingBox;
+        }
+
+        public override int GetHashCode()
+        {
+            return Hashing.Hash(this.Type, this.Coordinates, this.BoundingBox);
+        }
+
+        public static bool operator ==(Point left, Point right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (right is null || left is null)
+            {
+                return false;
+            }
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Point left, Point right)
+        {
+            return !(left == right);
         }
 
         #endregion
