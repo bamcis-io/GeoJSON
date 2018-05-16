@@ -67,7 +67,7 @@ be sent.
 ## Revision History
 
 ### 1.1.0
-Retargetted library to 
+Retargetted library to netstandard1.6.
 
 ### 1.0.0
 Initial release of the library.
