@@ -102,7 +102,7 @@ namespace BAMCIS.GeoJSON
             return JsonConvert.SerializeObject(this, formatting);
         }
 
-        public static GeoJson FromJson(string json) 
+        public static GeoJson FromJson(string json)
         {
             return JsonConvert.DeserializeObject<GeoJson>(json);
         }

@@ -27,7 +27,7 @@ namespace BAMCIS.GeoJSON.Serde
         }
 
         /// <summary>
-        /// This takes the arrray of arrays and recasts them back to linear ring objects
+        /// This takes the array of arrays and recasts them back to linear ring objects
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="objectType"></param>
