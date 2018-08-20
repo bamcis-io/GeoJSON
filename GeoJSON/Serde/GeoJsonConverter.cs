@@ -26,8 +26,8 @@ namespace BAMCIS.GeoJSON.Serde
         /// <summary>
         /// Object of GeoJson type can be converted with this converter
         /// </summary>
-        /// <param name="objectType"></param>
-        /// <returns></returns>
+        /// <param name="objectType">The object type</param>
+        /// <returns>Whether the object can be converted to GeoJson</returns>
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(GeoJson);

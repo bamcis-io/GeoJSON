@@ -22,7 +22,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a new LinearRing
         /// </summary>
-        /// <param name="coordinates"></param>
+        /// <param name="coordinates">The coordinates that make up the linear ring</param>
         [JsonConstructor]
         public LinearRing(IEnumerable<Position> coordinates) : base(coordinates)
         {
@@ -35,7 +35,7 @@ namespace BAMCIS.GeoJSON
 
             if (!Coords.First().Equals(Coords.Last()))
             {
-                throw new ArgumentException("The first and last value must be equivalent.");
+                throw new ArgumentException("The first and last value must be equivalent.", "coordinates");
             }
         }
 

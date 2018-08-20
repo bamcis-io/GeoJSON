@@ -22,12 +22,12 @@ namespace BAMCIS.GeoJSON
 
         #endregion
 
-        #region Constructors 
+        #region Constructors
 
         /// <summary>
         /// Creates a new LineString
         /// </summary>
-        /// <param name="coordinates"></param>
+        /// <param name="coordinates">The coordinates in the line string</param>
         public LineString(IEnumerable<Position> coordinates) : base(GeoJsonType.LineString)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");

@@ -33,8 +33,8 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Builds a new Feature with the given geometry and optional properties
         /// </summary>
-        /// <param name="geometry"></param>
-        /// <param name="properties"></param>
+        /// <param name="geometry">The geometry to create the feature from</param>
+        /// <param name="properties">The feature properties</param>
         [JsonConstructor]
         public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null) : base(GeoJsonType.Feature)
         {
@@ -46,6 +46,11 @@ namespace BAMCIS.GeoJSON
 
         #region Public Methods
 
+        /// <summary>
+        /// Creates a Feature from json
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
         public static new Feature FromJson(string json)
         {
             return JsonConvert.DeserializeObject<Feature>(json);

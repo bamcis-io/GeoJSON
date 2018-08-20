@@ -27,7 +27,7 @@ namespace BAMCIS.GeoJSON.Serde
         }
 
         /// <summary>
-        /// This takes the arrray of arrays and recasts them back to line string objects
+        /// This takes the array of arrays and recasts them back to line string objects
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="objectType"></param>

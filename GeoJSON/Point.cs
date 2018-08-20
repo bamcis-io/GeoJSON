@@ -24,7 +24,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a new point with the provided coordinates
         /// </summary>
-        /// <param name="coordinates"></param>
+        /// <param name="coordinates">The position of this point</param>
         [JsonConstructor]
         public Point(Position coordinates) : base(GeoJsonType.Point)
         {
@@ -35,6 +35,11 @@ namespace BAMCIS.GeoJSON
 
         #region Public Methods
 
+        /// <summary>
+        /// Deserializes the json into a Point
+        /// </summary>
+        /// <param name="json">The json to deserialize</param>
+        /// <returns>A Point object</returns>
         public static new Point FromJson(string json)
         {
             return JsonConvert.DeserializeObject<Point>(json);
@@ -43,7 +48,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Gets the longitude or easting of the point
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The longitude</returns>
         public double GetLongitude()
         {
             return this.Coordinates.Longitude;
@@ -52,7 +57,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Gets the latitude or northing of the point
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The latitude</returns>
         public double GetLatitude()
         {
             return this.Coordinates.Latitude;
@@ -62,7 +67,7 @@ namespace BAMCIS.GeoJSON
         /// Gets the elevation of the point if it exists
         /// in the coordinates.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The elevation or if it wasn't set, the returns NaN</returns>
         public bool TryGetElevation(out double elevation)
         {
             if (this.Coordinates.HasElevation())

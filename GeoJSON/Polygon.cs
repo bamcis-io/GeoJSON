@@ -16,7 +16,6 @@ namespace BAMCIS.GeoJSON
 
         /// <summary>
         /// The coordinates are an array of linear ring coordinate arrays.
-        /// 
         /// For Polygons with more than one of these rings, the first MUST be
         /// the exterior ring, and any others MUST be interior rings.The
         /// exterior ring bounds the surface, and the interior rings(if
@@ -26,12 +25,12 @@ namespace BAMCIS.GeoJSON
 
         #endregion
 
-        #region Constructors 
+        #region Constructors
 
         /// <summary>
         /// Creates a new Polygon
         /// </summary>
-        /// <param name="coordinates"></param>
+        /// <param name="coordinates">The linear rings that make up the polygon</param>
         [JsonConstructor]
         public Polygon(IEnumerable<LinearRing> coordinates) : base(GeoJsonType.Polygon)
         {
@@ -47,6 +46,11 @@ namespace BAMCIS.GeoJSON
 
         #region Public Methods
 
+        /// <summary>
+        /// Deserializes the json into a Polygon
+        /// </summary>
+        /// <param name="json">The json to deserialize</param>
+        /// <returns>A Polygon object</returns>
         public static new Polygon FromJson(string json)
         {
             return JsonConvert.DeserializeObject<Polygon>(json);

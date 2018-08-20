@@ -21,7 +21,7 @@ namespace BAMCIS.GeoJSON
 
         #endregion
 
-        #region Constructors 
+        #region Constructors
 
         /// <summary>
         /// Creates a new multipoint object

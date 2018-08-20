@@ -66,7 +66,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Base constructor that all derived classes must implement
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">The type of the GeoJson object</param>
         protected GeoJson(GeoJsonType type)
         {
             this.Type = type;
@@ -81,8 +81,8 @@ namespace BAMCIS.GeoJSON
         /// Gets the appropriate class type corresponding to the enum
         /// representing the type
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type">The GeoJson type of the </param>
+        /// <returns>The .NET type that corresponds to the GeoJson type</returns>
         public static Type GetType(GeoJsonType type)
         {
             return DerivedTypeToType[type];
@@ -102,6 +102,11 @@ namespace BAMCIS.GeoJSON
             return JsonConvert.SerializeObject(this, formatting);
         }
 
+        /// <summary>
+        /// Deserializes the json to a GeoJson object
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
         public static GeoJson FromJson(string json) 
         {
             return JsonConvert.DeserializeObject<GeoJson>(json);

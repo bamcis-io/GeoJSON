@@ -43,7 +43,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Each inherited class must implement this constructor
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">The GeoJson type</param>
         [JsonConstructor]
         protected Geometry(GeoJsonType type) : base(type)
         {
@@ -66,8 +66,8 @@ namespace BAMCIS.GeoJSON
         /// Gets the appropriate class type corresponding to the enum
         /// representing the type
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type">The GeoJson type</param>
+        /// <returns>The .NET type that corresponds to the GeoJson type</returns>
         public new static Type GetType(GeoJsonType type)
         {
             if (DerivedTypeToType.ContainsKey(type))

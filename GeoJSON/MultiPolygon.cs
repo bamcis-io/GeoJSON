@@ -22,12 +22,12 @@ namespace BAMCIS.GeoJSON
 
         #endregion
 
-        #region Constructors 
+        #region Constructors
 
         /// <summary>
         /// Creates a new MultiPolygon
         /// </summary>
-        /// <param name="coordinates"></param>
+        /// <param name="coordinates">The coordinates that make up the multi polygon</param>
         [JsonConstructor]
         public MultiPolygon(IEnumerable<Polygon> coordinates) : base(GeoJsonType.MultiPolygon)
         {
