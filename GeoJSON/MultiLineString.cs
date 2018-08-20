@@ -28,7 +28,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a new MultiLineString
         /// </summary>
-        /// <param name="coordinates"></param>
         [JsonConstructor]
         public MultiLineString(IEnumerable<LineString> coordinates) : base(GeoJsonType.MultiLineString)
         {

@@ -33,8 +33,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Builds a new Feature with the given geometry and optional properties
         /// </summary>
-        /// <param name="geometry"></param>
-        /// <param name="properties"></param>
         [JsonConstructor]
         public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null) : base(GeoJsonType.Feature)
         {
@@ -56,8 +54,6 @@ namespace BAMCIS.GeoJSON
         /// that only the Keys at the top level of the properties dictionary are
         /// checked to determine equality of that property.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj))

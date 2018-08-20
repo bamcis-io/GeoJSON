@@ -24,20 +24,18 @@ namespace BAMCIS.GeoJSON
         public double Latitude { get; }
 
         /// <summary>
-        /// The positions elevation. This will be NaN 
+        /// The positions elevation. This will be NaN
         /// if an elevation is not provided for the position
         /// </summary>
         public double Elevation { get; }
 
         #endregion
 
-        #region Constructors 
+        #region Constructors
 
         /// <summary>
         /// Creates a position with a longitude and latitude
         /// </summary>
-        /// <param name="longitude"></param>
-        /// <param name="latitude"></param>
         public Position(double longitude, double latitude) : this(longitude, latitude, double.NaN)
         {
         }
@@ -45,9 +43,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a position with a longitude, latitude, and elevation
         /// </summary>
-        /// <param name="longitude"></param>
-        /// <param name="latitude"></param>
-        /// <param name="elevation"></param>
         [JsonConstructor]
         public Position(double longitude, double latitude, double elevation)
         {
@@ -83,7 +78,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Determines if an elevation has been provided for a position.
         /// </summary>
-        /// <returns></returns>
         public bool HasElevation()
         {
             return !double.IsNaN(this.Elevation);

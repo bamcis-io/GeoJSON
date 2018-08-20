@@ -22,7 +22,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a new LinearRing
         /// </summary>
-        /// <param name="coordinates"></param>
         [JsonConstructor]
         public LinearRing(IEnumerable<Position> coordinates) : base(coordinates)
         {
