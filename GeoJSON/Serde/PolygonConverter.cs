@@ -27,13 +27,8 @@ namespace BAMCIS.GeoJSON.Serde
         }
 
         /// <summary>
-        /// This takes the arrray of arrays and recasts them back to linear ring objects
+        /// This takes the array of arrays and recasts them back to linear ring objects
         /// </summary>
-        /// <param name="reader"></param>
-        /// <param name="objectType"></param>
-        /// <param name="existingValue"></param>
-        /// <param name="serializer"></param>
-        /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             JObject Token = JObject.Load(reader);
@@ -50,9 +45,6 @@ namespace BAMCIS.GeoJSON.Serde
         /// <summary>
         /// This flattens the coordinates property into an array of arrays
         /// </summary>
-        /// <param name="writer"></param>
-        /// <param name="value"></param>
-        /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             Polygon Poly = (Polygon)value;

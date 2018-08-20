@@ -7,10 +7,10 @@ namespace BAMCIS.GeoJSON
 {
     /// <summary>
     /// A linear ring is a closed LineString with four or more positions.
-    /// 
+    ///
     /// A linear ring is the boundary of a surface or the boundary of a
     /// hole in a surface.
-    /// 
+    ///
     /// A linear ring MUST follow the right-hand rule with respect to the
     /// area it bounds, i.e., exterior rings are counterclockwise, and
     /// holes are clockwise.
@@ -22,7 +22,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a new LinearRing
         /// </summary>
-        /// <param name="coordinates"></param>
         [JsonConstructor]
         public LinearRing(IEnumerable<Position> coordinates) : base(coordinates)
         {
@@ -30,7 +29,7 @@ namespace BAMCIS.GeoJSON
 
             if (Coords.Length < 4)
             {
-                throw new ArgumentOutOfRangeException("A linear ring requires 4 or more positions.");
+                throw new ArgumentOutOfRangeException("coordinates", "A linear ring requires 4 or more positions.");
             }
 
             if (!Coords.First().Equals(Coords.Last()))

@@ -24,7 +24,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a new point with the provided coordinates
         /// </summary>
-        /// <param name="coordinates"></param>
         [JsonConstructor]
         public Point(Position coordinates) : base(GeoJsonType.Point)
         {
@@ -43,7 +42,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Gets the longitude or easting of the point
         /// </summary>
-        /// <returns></returns>
         public double GetLongitude()
         {
             return this.Coordinates.Longitude;
@@ -52,7 +50,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Gets the latitude or northing of the point
         /// </summary>
-        /// <returns></returns>
         public double GetLatitude()
         {
             return this.Coordinates.Latitude;
@@ -62,7 +59,6 @@ namespace BAMCIS.GeoJSON
         /// Gets the elevation of the point if it exists
         /// in the coordinates.
         /// </summary>
-        /// <returns></returns>
         public bool TryGetElevation(out double elevation)
         {
             if (this.Coordinates.HasElevation())

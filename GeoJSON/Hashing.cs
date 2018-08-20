@@ -8,8 +8,6 @@
         /// <summary>
         /// Computes a hash for a set of objects
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         internal static int Hash(params object[] args)
         {
             unchecked // Overflow is fine, just wrap

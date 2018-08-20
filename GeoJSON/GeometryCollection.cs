@@ -29,7 +29,6 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a new GeometryCollection
         /// </summary>
-        /// <param name="geometries"></param>
         [JsonConstructor]
         public GeometryCollection(IEnumerable<Geometry> geometries) : base(GeoJsonType.GeometryCollection)
         {

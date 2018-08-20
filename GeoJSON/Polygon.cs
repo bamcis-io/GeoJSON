@@ -16,7 +16,7 @@ namespace BAMCIS.GeoJSON
 
         /// <summary>
         /// The coordinates are an array of linear ring coordinate arrays.
-        /// 
+        ///
         /// For Polygons with more than one of these rings, the first MUST be
         /// the exterior ring, and any others MUST be interior rings.The
         /// exterior ring bounds the surface, and the interior rings(if
@@ -26,12 +26,11 @@ namespace BAMCIS.GeoJSON
 
         #endregion
 
-        #region Constructors 
+        #region Constructors
 
         /// <summary>
         /// Creates a new Polygon
         /// </summary>
-        /// <param name="coordinates"></param>
         [JsonConstructor]
         public Polygon(IEnumerable<LinearRing> coordinates) : base(GeoJsonType.Polygon)
         {

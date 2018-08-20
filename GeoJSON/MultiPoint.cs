@@ -21,12 +21,11 @@ namespace BAMCIS.GeoJSON
 
         #endregion
 
-        #region Constructors 
+        #region Constructors
 
         /// <summary>
         /// Creates a new multipoint object
         /// </summary>
-        /// <param name="coordinates"></param>
         public MultiPoint(IEnumerable<Position> coordinates) : base(GeoJsonType.MultiPoint)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
