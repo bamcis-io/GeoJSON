@@ -48,17 +48,17 @@ namespace BAMCIS.GeoJSON
         {
             if (double.IsInfinity(latitude) || double.IsNaN(latitude))
             {
-                throw new ArgumentOutOfRangeException("Latitude", "The latitude cannot be NaN or infinity.");
+                throw new ArgumentOutOfRangeException("latitude", "The latitude cannot be NaN or infinity.");
             }
 
             if (double.IsInfinity(longitude) || double.IsNaN(longitude))
             {
-                throw new ArgumentOutOfRangeException("Longitude", "The longitude cannot be NaN or infinity.");
+                throw new ArgumentOutOfRangeException("longitude", "The longitude cannot be NaN or infinity.");
             }
 
             if (double.IsInfinity(elevation))
             {
-                throw new ArgumentOutOfRangeException("Elevation", "The elevation cannot be infinity.");
+                throw new ArgumentOutOfRangeException("elevation", "The elevation cannot be infinity.");
             }
 
             this.Latitude = latitude;
