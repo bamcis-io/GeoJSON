@@ -66,6 +66,9 @@ be sent.
 
 ## Revision History
 
+### 1.1.2
+Actually fixed targeting `netstandard1.6` instead of v1.6.1.
+
 ### 1.1.1
 Fixed targetting of netstandard1.6, dropped JSON.NET to 9.0.1. Added `netstandard2.0` and `net45` as target frameworks.
 

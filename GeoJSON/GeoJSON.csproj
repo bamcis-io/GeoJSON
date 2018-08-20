@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;netstandard2.0;net45</TargetFrameworks>
+    <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     <RootNamespace>BAMCIS.GeoJSON</RootNamespace>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Authors>Michael Haken</Authors>
     <Company>bamcis.io</Company>
     <Description>A .NET Core library for serializing and deserializing GeoJSON formatted JSON data. Complies with RFC 7946.</Description>
