@@ -67,8 +67,19 @@ namespace BAMCIS.GeoJSON
                 BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
             }
 
+            bool FeaturesEqual = true;
+
+            if (this.Features != null && Other.Features != null)
+            {
+                FeaturesEqual = this.Features.SequenceEqual(Other.Features);
+            }
+            else
+            {
+                FeaturesEqual = (this.Features == null && Other.Features == null);
+            }
+
             return this.Type == Other.Type &&
-                this.Features.SequenceEqual(Other.Features) &&
+                FeaturesEqual &&
                 BBoxEqual;
         }
 

@@ -80,6 +80,9 @@ be sent.
 
 ## Revision History
 
+### 1.2.1
+Fixed sequence comparison null value handling.
+
 ### 1.2.0
 Enabled the use of the bounding box property on all GeoJSON types.
 

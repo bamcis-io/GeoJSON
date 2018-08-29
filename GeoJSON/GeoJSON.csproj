@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     <RootNamespace>BAMCIS.GeoJSON</RootNamespace>
-    <Version>1.1.2</Version>
+    <Version>1.2.1</Version>
     <Authors>Michael Haken</Authors>
     <Company>bamcis.io</Company>
     <Description>A .NET Core library for serializing and deserializing GeoJSON formatted JSON data. Complies with RFC 7946.</Description>
@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/bamcis-io/GeoJSON</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>GeoJSON RFC7946</PackageTags>
-    <PackageReleaseNotes>Reduced dependencies to netstandard 1.6. General code cleanup and minor bug fixes. Added `netstandard2.0` and `net45` as target frameworks.</PackageReleaseNotes>
+    <PackageReleaseNotes>Enabled the use of the bounding box property on all GeoJSON types.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -73,8 +73,19 @@ namespace BAMCIS.GeoJSON
                 BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
             }
 
+            bool CoordinatesEqual = true;
+
+            if (this.Coordinates != null && Other.Coordinates != null)
+            {
+                CoordinatesEqual = this.Coordinates.SequenceEqual(Other.Coordinates);
+            }
+            else
+            {
+                CoordinatesEqual = (this.Coordinates == null && Other.Coordinates == null);
+            }
+
             return this.Type == Other.Type &&
-                this.Coordinates.SequenceEqual(Other.Coordinates) &&
+                CoordinatesEqual &&
                 BBoxEqual;
         }
 
