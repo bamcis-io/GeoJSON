@@ -30,7 +30,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates">The line strings that make up the object</param>
         [JsonConstructor]
-        public MultiLineString(IEnumerable<LineString> coordinates) : base(GeoJsonType.MultiLineString)
+        public MultiLineString(IEnumerable<LineString> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.MultiLineString, coordinates.Any(x => x.IsThreeDimensional()), boundingBox)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
 
@@ -63,9 +63,20 @@ namespace BAMCIS.GeoJSON
 
             MultiLineString Other = (MultiLineString)obj;
 
+            bool BBoxEqual = true;
+
+            if (this.BoundingBox != null && Other.BoundingBox != null)
+            {
+                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+            }
+            else
+            {
+                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+            }
+
             return this.Type == Other.Type &&
                 this.Coordinates.SequenceEqual(Other.Coordinates) &&
-                this.BoundingBox == Other.BoundingBox;
+                BBoxEqual;
         }
 
         public override int GetHashCode()

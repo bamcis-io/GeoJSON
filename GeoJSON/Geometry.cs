@@ -45,7 +45,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="type">The GeoJson type</param>
         [JsonConstructor]
-        protected Geometry(GeoJsonType type) : base(type)
+        protected Geometry(GeoJsonType type, bool is3D, IEnumerable<double> boundingBox = null) : base(type, is3D, boundingBox)
         {
             if (!DerivedTypeToType.ContainsKey(type))
             {

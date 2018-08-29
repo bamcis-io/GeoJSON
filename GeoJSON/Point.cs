@@ -1,6 +1,8 @@
 ﻿using BAMCIS.GeoJSON.Serde;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BAMCIS.GeoJSON
 {
@@ -10,6 +12,7 @@ namespace BAMCIS.GeoJSON
     [JsonConverter(typeof(InheritanceBlockerConverter))]
     public class Point : Geometry
     {
+
         #region Public Properties
 
         /// <summary>
@@ -26,7 +29,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates">The position of this point</param>
         [JsonConstructor]
-        public Point(Position coordinates) : base(GeoJsonType.Point)
+        public Point(Position coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.Point, coordinates.HasElevation(), boundingBox)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
         }
@@ -94,9 +97,20 @@ namespace BAMCIS.GeoJSON
 
             Point Other = (Point)obj;
 
+            bool BBoxEqual = true;
+
+            if (this.BoundingBox != null && Other.BoundingBox != null)
+            {
+                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+            }
+            else
+            {
+                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+            }
+
             return this.Type == Other.Type &&
                 this.Coordinates == Other.Coordinates &&
-                this.BoundingBox == Other.BoundingBox;
+                BBoxEqual;
         }
 
         public override int GetHashCode()

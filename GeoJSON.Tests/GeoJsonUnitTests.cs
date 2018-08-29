@@ -186,5 +186,50 @@ namespace GeoJSON.Tests
             // ASSERT
             Assert.True(Geo.Equals(Geo2));
         }
+
+        [Fact]
+        public void GeoJsonFeatureTestWithBbox()
+        {
+            // ARRANGE
+            string Content = File.ReadAllText("featurebbox.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+
+            // ACT
+            GeoJson Geo = GeoJson.FromJson(Content);
+            string Content2 = Geo.ToJson();
+            GeoJson Geo2 = GeoJson.FromJson(Content2);
+
+            // ASSERT
+            Assert.True(Geo.Equals(Geo2));
+        }
+
+        [Fact]
+        public void GeoJson3DLineStringTestWithBbox()
+        {
+            // ARRANGE
+            string Content = File.ReadAllText("3dlinestringbbox.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+
+            // ACT
+            GeoJson Geo = GeoJson.FromJson(Content);
+            string Content2 = Geo.ToJson();
+            GeoJson Geo2 = GeoJson.FromJson(Content2);
+
+            // ASSERT
+            Assert.True(Geo.Equals(Geo2));
+        }
+
+        [Fact]
+        public void GeoJsonFeatureCollectionTestWithBbox()
+        {
+            // ARRANGE
+            string Content = File.ReadAllText("featurecollectionbbox.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+
+            // ACT
+            GeoJson Geo = GeoJson.FromJson(Content);
+            string Content2 = Geo.ToJson();
+            GeoJson Geo2 = GeoJson.FromJson(Content2);
+
+            // ASSERT
+            Assert.True(Geo.Equals(Geo2));
+        }
     }
 }

@@ -36,7 +36,7 @@ namespace BAMCIS.GeoJSON
         /// <param name="geometry">The geometry to create the feature from</param>
         /// <param name="properties">The feature properties</param>
         [JsonConstructor]
-        public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null) : base(GeoJsonType.Feature)
+        public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null, IEnumerable<double> boundingBox = null) : base(GeoJsonType.Feature, geometry.IsThreeDimensional(), boundingBox)
         {
             this.Geometry = geometry ?? throw new ArgumentNullException("geometry");
             this.Properties = properties ?? new Dictionary<string, dynamic>();
@@ -77,10 +77,33 @@ namespace BAMCIS.GeoJSON
 
             Feature Other = (Feature)obj;
 
+            bool BBoxEqual = true;
+
+            if (this.BoundingBox != null && Other.BoundingBox != null)
+            {
+                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+            }
+            else
+            {
+                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+            }
+
+            bool PropertiesEqual = true;
+
+            if (this.Properties != null && Other.Properties != null)
+            {
+                PropertiesEqual = this.Properties.Keys.SequenceEqual(Other.Properties.Keys);
+            }
+            else
+            {
+                PropertiesEqual = (this.Properties == null && Other.Properties == null);
+            }
+
+
             return this.Type == Other.Type &&
                 this.Geometry == Other.Geometry &&
-                this.BoundingBox == Other.BoundingBox &&
-                this.Properties.Keys.SequenceEqual(Other.Properties.Keys);
+                BBoxEqual &&
+                PropertiesEqual;
         }
 
         public override int GetHashCode()

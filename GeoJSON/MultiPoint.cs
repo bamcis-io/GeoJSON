@@ -27,7 +27,7 @@ namespace BAMCIS.GeoJSON
         /// Creates a new multipoint object
         /// </summary>
         /// <param name="coordinates"></param>
-        public MultiPoint(IEnumerable<Position> coordinates) : base(GeoJsonType.MultiPoint)
+        public MultiPoint(IEnumerable<Position> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.MultiPoint, coordinates.Any(x => x.HasElevation()), boundingBox)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
         }
@@ -55,9 +55,20 @@ namespace BAMCIS.GeoJSON
 
             MultiPoint Other = (MultiPoint)obj;
 
+            bool BBoxEqual = true;
+
+            if (this.BoundingBox != null && Other.BoundingBox != null)
+            {
+                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+            }
+            else
+            {
+                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+            }
+
             return this.Type == Other.Type &&
                 this.Coordinates.SequenceEqual(Other.Coordinates) &&
-                this.BoundingBox == Other.BoundingBox;
+                BBoxEqual;
         }
 
         public override int GetHashCode()

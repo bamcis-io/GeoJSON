@@ -1,9 +1,23 @@
 # BAMCIS GeoJSON
-An implementation of GeoJSON written in .NET Core 2.0. The library complies with the requirements of RFC 7946 (https://tools.ietf.org/html/rfc7946).
+An implementation of GeoJSON written in .NET Core 2.0. The library complies with the requirements of RFC 7946 (https://tools.ietf.org/html/rfc7946). Can be found on nuget https://www.nuget.org/packages/geojson.
+
+## Table of Contents
+- [Limitations](#limitations)
+- [Usage](#usage)
+  * [Example 1](#example-1)
+  * [Example 2](#example-2)
+  * [Example 3](#example-3)
+  * [Usage Notes](#usage-notes)
+- [Revision History](#revision-history)
+
+
+## Limitations
+
+The library does not support section 6 of RFC 7946, extending GeoJSON with Foreign Members. You would need to extend the existing Geometries, Feature, and FeatureCollection classes with the additional properties included in the serialized JSON.
 
 ## Usage
 
-### Basic Example 1
+### Example 1
 
 Given some GeoJSON data, such as:
 
@@ -24,17 +38,17 @@ You can receive the text and deserialize it to a GeoJSON object
 
 Once the data is deserialized, you can cast it to its actual type
 
-	switch (data.Type)
-	{
-		case GeoJsonType.Feature:
-		{
+    switch (data.Type)
+    {
+        case GeoJsonType.Feature:
+        {
             Feature feature = (Feature)data;
-		    break;
-		}
-		...
-	}
+            break;
+        }
+        ...
+    }
 
-### Basic Example 2
+### Example 2
 If you know what kind of GeoJSON you're receiving, you can deserialize to it directly:
 
     FeatureCollection Col = FeatureCollection.FromJson(data);
@@ -43,7 +57,7 @@ And also go back to JSON data:
 
     string Json = Col.ToJson(Formatting.Idented);
 
-### Basic Example 3
+### Example 3
 
 Or you can create a GeoJSON object and serialize it:
 
@@ -65,6 +79,9 @@ The Feature **'Properties'** property implements an `IDictionary<string, dynamic
 be sent.
 
 ## Revision History
+
+### 1.2.0
+Enabled the use of the bounding box property on all GeoJSON types.
 
 ### 1.1.2
 Actually fixed targeting `netstandard1.6` instead of v1.6.1.

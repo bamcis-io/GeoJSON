@@ -28,7 +28,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="features">The features that are part of the feature collection</param>
         [JsonConstructor]
-        public FeatureCollection(IEnumerable<Feature> features) : base(GeoJsonType.FeatureCollection)
+        public FeatureCollection(IEnumerable<Feature> features, IEnumerable<double> boundingBox = null) : base(GeoJsonType.FeatureCollection, features.Any(x => x.IsThreeDimensional()), boundingBox)
         {
             this.Features = features ?? throw new ArgumentNullException("features");
         }
@@ -56,9 +56,20 @@ namespace BAMCIS.GeoJSON
 
             FeatureCollection Other = (FeatureCollection)obj;
 
+            bool BBoxEqual = true;
+
+            if (this.BoundingBox != null && Other.BoundingBox != null)
+            {
+                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+            }
+            else
+            {
+                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+            }
+
             return this.Type == Other.Type &&
                 this.Features.SequenceEqual(Other.Features) &&
-                this.BoundingBox == Other.BoundingBox;
+                BBoxEqual;
         }
 
         public override int GetHashCode()

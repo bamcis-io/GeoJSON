@@ -31,7 +31,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="geometries">The geometries that are part of the collection</param>
         [JsonConstructor]
-        public GeometryCollection(IEnumerable<Geometry> geometries) : base(GeoJsonType.GeometryCollection)
+        public GeometryCollection(IEnumerable<Geometry> geometries, IEnumerable<double> boundingBox = null) : base(GeoJsonType.GeometryCollection, geometries.Any(x => x.IsThreeDimensional()), boundingBox)
         {
             this.Geometries = geometries ?? throw new ArgumentNullException("geometries");
         }

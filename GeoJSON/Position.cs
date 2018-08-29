@@ -9,7 +9,7 @@ namespace BAMCIS.GeoJSON
     /// A GeoJSON position consisting of a longitude, latitude, and optional elevation
     /// </summary>
     [JsonConverter(typeof(PositionConverter))]
-    public class Position : IPosition, IEquatable<Position>, IEqualityComparer<Position>
+    public class Position : IEquatable<Position>, IEqualityComparer<Position>
     {
         #region Public Properties
 

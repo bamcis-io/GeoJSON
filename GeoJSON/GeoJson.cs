@@ -16,6 +16,7 @@ namespace BAMCIS.GeoJSON
 
         private static readonly Dictionary<Type, GeoJsonType> TypeToDerivedType;
         private static readonly Dictionary<GeoJsonType, Type> DerivedTypeToType;
+        private bool Is3D;
 
         #endregion
 
@@ -27,13 +28,15 @@ namespace BAMCIS.GeoJSON
         public GeoJsonType Type { get; }
 
         /// <summary>
-        ///  A GeoJSON object MAY have a member named "bbox" to include
+        /// A GeoJSON object MAY have a member named "bbox" to include
         /// information on the coordinate range for its Geometries, Features, or
         /// FeatureCollections.The value of the bbox member MUST be an array of
         /// length 2*n where n is the number of dimensions represented in the
         /// contained geometries, with all axes of the most southwesterly point
-        /// followed by all axes of the more northeasterly point.The axes order
+        /// followed by all axes of the more northeasterly point. The axes order
         /// of a bbox follows the axes order of geometries.
+        /// 
+        /// Takes the form [west, south, east, north] for 2D or of the form [west, south, min-altitude, east, north, max-altitude] for 3D 
         /// </summary>
         [JsonProperty(PropertyName = "bbox", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<double> BoundingBox { get; }
@@ -67,15 +70,39 @@ namespace BAMCIS.GeoJSON
         /// Base constructor that all derived classes must implement
         /// </summary>
         /// <param name="type">The type of the GeoJson object</param>
-        protected GeoJson(GeoJsonType type)
+        protected GeoJson(GeoJsonType type, bool is3D, IEnumerable<double> boundingBox = null)
         {
             this.Type = type;
-            this.BoundingBox = null;
+            this.BoundingBox = boundingBox;
+            this.Is3D = is3D;
+
+            if (this.BoundingBox != null)
+            {
+                int Length = boundingBox.Count();
+
+                if (this.Is3D && Length != 6)
+                {
+                    throw new ArgumentOutOfRangeException("boundingBox", "The bounding box must contain 6 elements for a 3D GeoJSON object.");
+                }
+                else if (!this.Is3D && Length != 4)
+                {
+                    throw new ArgumentOutOfRangeException("boundingBox", "The bounding box must contain 4 elements for a 2D GeoJSON object.");
+                }
+            }
         }
 
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Indicates that at least one of the coordinates in the GeoJson has an elevation
+        /// </summary>
+        /// <returns></returns>
+        public bool IsThreeDimensional()
+        {
+            return this.Is3D;
+        }
 
         /// <summary>
         /// Gets the appropriate class type corresponding to the enum

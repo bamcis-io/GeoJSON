@@ -29,7 +29,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates">The coordinates that make up the multi polygon</param>
         [JsonConstructor]
-        public MultiPolygon(IEnumerable<Polygon> coordinates) : base(GeoJsonType.MultiPolygon)
+        public MultiPolygon(IEnumerable<Polygon> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.MultiPolygon, coordinates.Any(x => x.IsThreeDimensional()), boundingBox)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
 
@@ -62,9 +62,20 @@ namespace BAMCIS.GeoJSON
 
             MultiPolygon Other = (MultiPolygon)obj;
 
+            bool BBoxEqual = true;
+
+            if (this.BoundingBox != null && Other.BoundingBox != null)
+            {
+                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+            }
+            else
+            {
+                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+            }
+
             return this.Type == Other.Type &&
                 this.Coordinates.SequenceEqual(Other.Coordinates) &&
-                this.BoundingBox == Other.BoundingBox;
+                BBoxEqual;
         }
 
         public override int GetHashCode()

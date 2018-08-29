@@ -32,7 +32,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates">The linear rings that make up the polygon</param>
         [JsonConstructor]
-        public Polygon(IEnumerable<LinearRing> coordinates) : base(GeoJsonType.Polygon)
+        public Polygon(IEnumerable<LinearRing> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.Polygon, coordinates.Any(x => x.IsThreeDimensional()), boundingBox)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
 
@@ -70,9 +70,31 @@ namespace BAMCIS.GeoJSON
 
             Polygon Other = (Polygon)obj;
 
+            bool BBoxEqual = true;
+
+            if (this.BoundingBox != null && Other.BoundingBox != null)
+            {
+                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+            }
+            else
+            {
+                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+            }
+
+            bool CoordinatesEqual = true;
+
+            if (this.Coordinates != null && Other.Coordinates != null)
+            {
+                CoordinatesEqual = this.Coordinates.SequenceEqual(Other.Coordinates);
+            }
+            else
+            {
+                CoordinatesEqual = (this.Coordinates == null && Other.Coordinates == null);
+            }
+
             return this.Type == Other.Type &&
-                this.Coordinates.SequenceEqual(Other.Coordinates) &&
-                this.BoundingBox == Other.BoundingBox;
+                CoordinatesEqual &&
+                BBoxEqual;
         }
 
         public override int GetHashCode()

@@ -24,7 +24,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates">The coordinates that make up the linear ring</param>
         [JsonConstructor]
-        public LinearRing(IEnumerable<Position> coordinates) : base(coordinates)
+        public LinearRing(IEnumerable<Position> coordinates, IEnumerable<double> boundingBox = null) : base(coordinates, boundingBox)
         {
             Position[] Coords = this.Coordinates.ToArray();
 
