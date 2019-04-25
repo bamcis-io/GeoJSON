@@ -17,6 +17,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The collection of features
         /// </summary>
+        [JsonProperty(PropertyName = "features")]
         public IEnumerable<Feature> Features { get; }
 
         #endregion

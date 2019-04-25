@@ -18,6 +18,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The coordinates of a linestring are an array of positions
         /// </summary>
+        [JsonProperty(PropertyName = "coordinates")]
         public IEnumerable<Position> Coordinates { get; }
 
         #endregion

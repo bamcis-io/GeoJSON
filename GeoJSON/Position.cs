@@ -16,17 +16,20 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The position's longitude or easting
         /// </summary>
+        [JsonProperty(PropertyName = "longitude")]
         public double Longitude { get; }
 
         /// <summary>
         /// The position's latitude or northing
         /// </summary>
+        [JsonProperty(PropertyName = "latitude")]
         public double Latitude { get; }
 
         /// <summary>
         /// The positions elevation. This will be NaN
         /// if an elevation is not provided for the position
         /// </summary>
+        [JsonProperty(PropertyName = "elevation")]
         public double Elevation { get; }
 
         #endregion

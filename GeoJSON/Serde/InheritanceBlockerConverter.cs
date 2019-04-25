@@ -5,7 +5,7 @@ namespace BAMCIS.GeoJSON.Serde
 {
     /// <summary>
     /// This converter is just used to block the base Geometry converter
-    /// so that and inherited classes use the default serde when the 
+    /// so that any inherited classes use the default serde when the 
     /// GeometryConverter calls ToObject() on them
     /// </summary>
     public class InheritanceBlockerConverter : JsonConverter

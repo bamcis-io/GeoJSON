@@ -20,6 +20,7 @@ namespace BAMCIS.GeoJSON
         /// The value of "geometries" is an array.Each element of this array is a
         /// GeoJSON Geometry object.  It is possible for this array to be empty.
         /// </summary>
+        [JsonProperty(PropertyName = "geometries")]
         public IEnumerable<Geometry> Geometries { get; }
 
         #endregion

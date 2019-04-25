@@ -80,6 +80,9 @@ be sent.
 
 ## Revision History
 
+### 2.0.0
+Changed JSON serialized property names to proper camel case by default to be RFC compliant. Added strong-named assembly signing.
+
 ### 1.2.1
 Fixed sequence comparison null value handling.
 

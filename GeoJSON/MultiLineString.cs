@@ -19,6 +19,7 @@ namespace BAMCIS.GeoJSON
         /// For type "MultiLineString", the "coordinates" member is an array of
         /// LineString coordinate arrays.
         /// </summary>
+        [JsonProperty(PropertyName = "coordinates")]
         public IEnumerable<LineString> Coordinates { get; }
 
         #endregion

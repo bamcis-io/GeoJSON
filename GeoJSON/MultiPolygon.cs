@@ -18,6 +18,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The coordinates are an array of polygons.
         /// </summary>
+        [JsonProperty(PropertyName = "coordinates")]
         public IEnumerable<Polygon> Coordinates { get; }
 
         #endregion

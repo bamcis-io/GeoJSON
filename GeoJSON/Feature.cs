@@ -17,6 +17,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The geometry of this feature
         /// </summary>
+        [JsonProperty(PropertyName = "geometry")]
         public Geometry Geometry { get; }
 
         /// <summary>
@@ -24,6 +25,7 @@ namespace BAMCIS.GeoJSON
         /// is dynamic as it could be a string, bool, null, number,
         /// array, or object
         /// </summary>
+        [JsonProperty(PropertyName = "properties")]
         public IDictionary<string, dynamic> Properties { get; }
 
         #endregion

@@ -21,6 +21,7 @@ namespace BAMCIS.GeoJSON
         /// exterior ring bounds the surface, and the interior rings(if
         /// present) bound holes within the surface.
         /// </summary>
+        [JsonProperty(PropertyName = "coordinates")]
         public IEnumerable<LinearRing> Coordinates { get; }
 
         #endregion

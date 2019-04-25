@@ -18,6 +18,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// For type "Point", the "coordinates" member is a single position.
         /// </summary>
+        [JsonProperty(PropertyName = "coordinates")]
         public Position Coordinates { get; }
 
         #endregion

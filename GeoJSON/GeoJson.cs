@@ -25,6 +25,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The type of the geojson object
         /// </summary>
+        [JsonProperty(PropertyName = "type")]
         public GeoJsonType Type { get; }
 
         /// <summary>
