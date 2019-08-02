@@ -34,7 +34,7 @@ Given some GeoJSON data, such as:
 
 You can receive the text and deserialize it to a GeoJSON object
 
-    GeoJson data = JsonConvert.Deserialize<GeoJson>(jsonString);
+    GeoJson data = JsonConvert.DeserializeObject<GeoJson>(jsonString);
 
 Once the data is deserialized, you can cast it to its actual type
 
