@@ -1,4 +1,5 @@
-﻿using BAMCIS.GeoJSON.Serde;
+﻿using BAMCIS.GeoJSON.Externals;
+using BAMCIS.GeoJSON.Serde;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -130,6 +131,11 @@ namespace BAMCIS.GeoJSON
             return JsonConvert.SerializeObject(this, formatting);
         }
 
+        public virtual byte[] ToWkb(bool useLittleEndian = false)
+        {
+            return WkbConverter.To(this, useLittleEndian);
+        }
+
         /// <summary>
         /// Deserializes the json to a GeoJson object
         /// </summary>
@@ -140,6 +146,15 @@ namespace BAMCIS.GeoJSON
             return JsonConvert.DeserializeObject<GeoJson>(json);
         }
 
+        /// <summary>
+        /// Deserializes the WKB byte array to a GeoJson object
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static GeoJson FromWkb(byte[] bytes)
+        {
+            return WkbConverter.From(bytes);
+        }
         #endregion
     }
 }

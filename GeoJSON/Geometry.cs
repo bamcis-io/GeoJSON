@@ -1,4 +1,5 @@
-﻿using BAMCIS.GeoJSON.Serde;
+﻿using BAMCIS.GeoJSON.Externals;
+using BAMCIS.GeoJSON.Serde;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,19 @@ namespace BAMCIS.GeoJSON
         {
             return JsonConvert.DeserializeObject<Geometry>(json);
         }
+
+
+        /// <summary>
+        /// Deserialize WKB byte array to Geometry.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static new Geometry FromWkb(byte[] bytes)
+        {
+            return WkbConverter.From(bytes);
+        }
+
+
 
         /// <summary>
         /// Gets the appropriate class type corresponding to the enum
