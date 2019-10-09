@@ -45,6 +45,12 @@ namespace BAMCIS.GeoJSON.Serde
         /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            // Geometry can be null in a feature
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+
             JObject Token = JObject.Load(reader);
 
             if (!Token.TryGetValue("type", StringComparison.OrdinalIgnoreCase, out JToken TypeToken))

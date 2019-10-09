@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="feature_null_geometry.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="featurebbox.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

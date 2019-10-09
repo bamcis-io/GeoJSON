@@ -38,9 +38,9 @@ namespace BAMCIS.GeoJSON
         /// <param name="geometry">The geometry to create the feature from</param>
         /// <param name="properties">The feature properties</param>
         [JsonConstructor]
-        public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null, IEnumerable<double> boundingBox = null) : base(GeoJsonType.Feature, geometry.IsThreeDimensional(), boundingBox)
+        public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null, IEnumerable<double> boundingBox = null) : base(GeoJsonType.Feature, geometry == null ? false : geometry.IsThreeDimensional(), boundingBox)
         {
-            this.Geometry = geometry ?? throw new ArgumentNullException("geometry");
+            this.Geometry = geometry; // Geometry can be null
             this.Properties = properties ?? new Dictionary<string, dynamic>();
         }
 

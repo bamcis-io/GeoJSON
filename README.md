@@ -80,6 +80,9 @@ be sent.
 
 ## Revision History
 
+### 2.0.1
+Bug fix for NULL geometry JSON token in a Feature, which is allowed by the RFC.
+
 ### 2.0.0
 Changed JSON serialized property names to proper camel case by default to be RFC compliant. Added strong-named assembly signing.
 

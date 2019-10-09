@@ -69,6 +69,21 @@ namespace GeoJSON.Tests
         }
 
         [Fact]
+        public void FeatureTestNullGeometry()
+        {
+            // ARRANGE
+            string Content = File.ReadAllText("feature_null_geometry.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+
+            // ACT
+            Feature Geo = JsonConvert.DeserializeObject<Feature>(Content);
+            string Content2 = JsonConvert.SerializeObject(Geo);
+            Feature Geo2 = JsonConvert.DeserializeObject<Feature>(Content2);
+
+            // ASSERT
+            Assert.True(Geo.Equals(Geo2));
+        }
+
+        [Fact]
         public void FeatureCollectionTest()
         {
             // ARRANGE
