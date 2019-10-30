@@ -44,6 +44,12 @@ namespace BAMCIS.GeoJSON.Serde
         /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            // Allow an abstract GeoJson to be null in deserialization
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+
             JObject Token = JObject.Load(reader);
 
             if (!Token.TryGetValue("type", StringComparison.OrdinalIgnoreCase, out JToken TypeToken))

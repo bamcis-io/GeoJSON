@@ -80,6 +80,9 @@ be sent.
 
 ## Revision History
 
+### 2.0.2
+Fixed bug for `MultiLineString` with less than 2 coordinates.
+
 ### 2.0.1
 Bug fix for NULL geometry JSON token in a Feature, which is allowed by the RFC.
 

@@ -34,11 +34,6 @@ namespace BAMCIS.GeoJSON
         public MultiLineString(IEnumerable<LineString> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.MultiLineString, coordinates.Any(x => x.IsThreeDimensional()), boundingBox)
         {
             this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
-
-            if (this.Coordinates.Count() < 2)
-            {
-                throw new ArgumentOutOfRangeException("coordinates", "A LineString must have at least two positions.");
-            }
         }
 
         #endregion
