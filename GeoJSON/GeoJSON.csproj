@@ -4,26 +4,34 @@
     <TargetFrameworks>netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     <RootNamespace>BAMCIS.GeoJSON</RootNamespace>
-    <Version>2.0.2</Version>
+    <Version>2.1.0</Version>
     <Authors>Michael Haken</Authors>
     <Company>bamcis.io</Company>
     <Description>A .NET Core library for serializing and deserializing GeoJSON formatted JSON data. Complies with RFC 7946.</Description>
     <Copyright>bamcis.io</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/bamcis-io/GeoJSON/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/bamcis-io/GeoJSON</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bamcis-io/GeoJSON</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>GeoJSON RFC7946</PackageTags>
-    <PackageReleaseNotes>Fixed bug for MultiLineString`with less than 2 coordinates.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added a method to remove interior linear rings from a Polygon object.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>GeoJSON.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

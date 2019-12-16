@@ -80,6 +80,9 @@ be sent.
 
 ## Revision History
 
+### 2.1.0
+Added a method to remove interior linear rings from a `Polygon` object.
+
 ### 2.0.2
 Fixed bug for `MultiLineString` with less than 2 coordinates.
 

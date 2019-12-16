@@ -12,6 +12,12 @@ namespace BAMCIS.GeoJSON
     [JsonConverter(typeof(PolygonConverter))]
     public class Polygon : Geometry
     {
+        #region Private Fields
+
+        private IEnumerable<LinearRing> _coordinates;
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -22,7 +28,12 @@ namespace BAMCIS.GeoJSON
         /// present) bound holes within the surface.
         /// </summary>
         [JsonProperty(PropertyName = "coordinates")]
-        public IEnumerable<LinearRing> Coordinates { get; }
+        public IEnumerable<LinearRing> Coordinates { 
+            get
+            {
+                return this._coordinates;
+            }
+        }
 
         #endregion
 
@@ -35,7 +46,7 @@ namespace BAMCIS.GeoJSON
         [JsonConstructor]
         public Polygon(IEnumerable<LinearRing> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.Polygon, coordinates.Any(x => x.IsThreeDimensional()), boundingBox)
         {
-            this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
+            this._coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
 
             if (!this.Coordinates.Any())
             {
@@ -46,6 +57,25 @@ namespace BAMCIS.GeoJSON
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Removes the interior linear rings that bound holes within the surface from the polygon's coordinates
+        /// leaving just 1 linear ring in the coordinates.
+        /// </summary>
+        /// <returns>Returns true if the polygon had more than linear ring and false if there were no linear rings to remove</returns>
+        public bool RemoveInteriorRings()
+        {
+            // If there is more than element
+            if (this._coordinates != null && this._coordinates.Skip(1).Any())
+            {
+                this._coordinates = this._coordinates.Take(1);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Deserializes the json into a Polygon

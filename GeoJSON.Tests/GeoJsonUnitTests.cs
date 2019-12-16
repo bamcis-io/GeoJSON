@@ -1,6 +1,7 @@
 using BAMCIS.GeoJSON;
 using Newtonsoft.Json;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace GeoJSON.Tests
@@ -126,6 +127,38 @@ namespace GeoJSON.Tests
 
             // ASSERT
             Assert.True(Geo.Equals(Geo2));
+        }
+
+        [Fact]
+        public void PolygonRemoveInnerRingsTestWithHole()
+        {
+            // ARRANGE
+            string Content = File.ReadAllText("polygonwithhole.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+
+            // ACT
+            Polygon Geo = JsonConvert.DeserializeObject<Polygon>(Content);
+            bool result = Geo.RemoveInteriorRings();
+
+
+            // ASSERT
+            Assert.True(result);
+            Assert.Single(Geo.Coordinates);
+        }
+
+        [Fact]
+        public void PolygonRemoveInnerRingsTestWithoutHole()
+        {
+            // ARRANGE
+            string Content = File.ReadAllText("polygon.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+
+            // ACT
+            Polygon Geo = JsonConvert.DeserializeObject<Polygon>(Content);
+            bool result = Geo.RemoveInteriorRings();
+
+
+            // ASSERT
+            Assert.False(result);
+            Assert.Single(Geo.Coordinates);
         }
 
         [Fact]
