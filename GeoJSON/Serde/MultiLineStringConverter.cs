@@ -36,11 +36,11 @@ namespace BAMCIS.GeoJSON.Serde
         /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JObject Token = JObject.Load(reader);
+            JObject token = JObject.Load(reader);
 
-            IEnumerable<IEnumerable<Position>> Coordinates = Token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<Position>>>(serializer);
+            IEnumerable<IEnumerable<Position>> coordinates = token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<Position>>>(serializer);
 
-            return new MultiLineString(Coordinates.Select(x => new LineString(x)));
+            return new MultiLineString(coordinates.Select(x => new LineString(x)));
         }
 
         /// <summary>
@@ -51,12 +51,12 @@ namespace BAMCIS.GeoJSON.Serde
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            MultiLineString Mls = (MultiLineString)value;
+            MultiLineString mls = (MultiLineString)value;
 
             JToken.FromObject(new
             {
-                type = Mls.Type,
-                coordinates = Mls.Coordinates.Select(x => x.Coordinates)
+                type = mls.Type,
+                coordinates = mls.Coordinates.Select(x => x.Coordinates)
             }).WriteTo(writer);
         }
 

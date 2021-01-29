@@ -51,22 +51,22 @@ namespace BAMCIS.GeoJSON.Serde
                 return null;
             }
 
-            JObject Token = JObject.Load(reader);
+            JObject token = JObject.Load(reader);
 
-            if (!Token.TryGetValue("type", StringComparison.OrdinalIgnoreCase, out JToken TypeToken))
+            if (!token.TryGetValue("type", StringComparison.OrdinalIgnoreCase, out JToken TypeToken))
             {
                 throw new JsonReaderException("Invalid geojson geometry object, does not have 'type' field.");
             }
 
-            Type ActualType = Geometry.GetType(TypeToken.ToObject<GeoJsonType>(serializer));
+            Type actualType = Geometry.GetType(TypeToken.ToObject<GeoJsonType>(serializer));
 
-            if (existingValue == null || existingValue.GetType() != ActualType)
+            if (existingValue == null || existingValue.GetType() != actualType)
             {
-                return Token.ToObject(ActualType, serializer);
+                return token.ToObject(actualType, serializer);
             }
             else
             {
-                using (JsonReader DerivedTypeReader = Token.CreateReader())
+                using (JsonReader DerivedTypeReader = token.CreateReader())
                 {
                     serializer.Populate(DerivedTypeReader, existingValue);
                 }

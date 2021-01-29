@@ -1,0 +1,10 @@
+﻿{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [ 200.0, 0.5 ]
+  },
+  "properties": {
+    "prop0": "value0"
+  }
+}

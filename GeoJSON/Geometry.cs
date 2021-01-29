@@ -14,8 +14,8 @@ namespace BAMCIS.GeoJSON
     {
         #region Private Fields
 
-        private static readonly Dictionary<Type, GeoJsonType> TypeToDerivedType;
-        private static readonly Dictionary<GeoJsonType, Type> DerivedTypeToType;
+        private static readonly Dictionary<Type, GeoJsonType> typeToDerivedType;
+        private static readonly Dictionary<GeoJsonType, Type> derivedTypeToType;
 
         #endregion
 
@@ -26,7 +26,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         static Geometry()
         {
-            TypeToDerivedType = new Dictionary<Type, GeoJsonType>()
+            typeToDerivedType = new Dictionary<Type, GeoJsonType>()
             {
                 { typeof(LineString), GeoJsonType.LineString },
                 { typeof(MultiLineString), GeoJsonType.MultiLineString },
@@ -37,7 +37,7 @@ namespace BAMCIS.GeoJSON
                 { typeof(GeometryCollection), GeoJsonType.GeometryCollection },
             };
 
-            DerivedTypeToType = TypeToDerivedType.ToDictionary(pair => pair.Value, pair => pair.Key);
+            derivedTypeToType = typeToDerivedType.ToDictionary(pair => pair.Value, pair => pair.Key);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace BAMCIS.GeoJSON
         [JsonConstructor]
         protected Geometry(GeoJsonType type, bool is3D, IEnumerable<double> boundingBox = null) : base(type, is3D, boundingBox)
         {
-            if (!DerivedTypeToType.ContainsKey(type))
+            if (!derivedTypeToType.ContainsKey(type))
             {
                 throw new ArgumentException($"The type {type} is not a valid geometry type.");
             }
@@ -70,9 +70,9 @@ namespace BAMCIS.GeoJSON
         /// <returns>The .NET type that corresponds to the GeoJson type</returns>
         public new static Type GetType(GeoJsonType type)
         {
-            if (DerivedTypeToType.ContainsKey(type))
+            if (derivedTypeToType.ContainsKey(type))
             {
-                return DerivedTypeToType[type];
+                return derivedTypeToType[type];
             }
             else
             {

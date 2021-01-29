@@ -55,33 +55,33 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            FeatureCollection Other = (FeatureCollection)obj;
+            FeatureCollection other = (FeatureCollection)obj;
 
-            bool BBoxEqual = true;
+            bool bBoxEqual = true;
 
-            if (this.BoundingBox != null && Other.BoundingBox != null)
+            if (this.BoundingBox != null && other.BoundingBox != null)
             {
-                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+                bBoxEqual = this.BoundingBox.SequenceEqual(other.BoundingBox);
             }
             else
             {
-                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+                bBoxEqual = (this.BoundingBox == null && other.BoundingBox == null);
             }
 
-            bool FeaturesEqual = true;
+            bool featuresEqual = true;
 
-            if (this.Features != null && Other.Features != null)
+            if (this.Features != null && other.Features != null)
             {
-                FeaturesEqual = this.Features.SequenceEqual(Other.Features);
+                featuresEqual = this.Features.SequenceEqual(other.Features);
             }
             else
             {
-                FeaturesEqual = (this.Features == null && Other.Features == null);
+                featuresEqual = (this.Features == null && other.Features == null);
             }
 
-            return this.Type == Other.Type &&
-                FeaturesEqual &&
-                BBoxEqual;
+            return this.Type == other.Type &&
+                featuresEqual &&
+                bBoxEqual;
         }
 
         public override int GetHashCode()

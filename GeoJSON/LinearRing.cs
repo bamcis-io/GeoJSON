@@ -26,14 +26,14 @@ namespace BAMCIS.GeoJSON
         [JsonConstructor]
         public LinearRing(IEnumerable<Position> coordinates, IEnumerable<double> boundingBox = null) : base(coordinates, boundingBox)
         {
-            Position[] Coords = this.Coordinates.ToArray();
+            Position[] coords = this.Coordinates.ToArray();
 
-            if (Coords.Length < 4)
+            if (coords.Length < 4)
             {
                 throw new ArgumentOutOfRangeException("A linear ring requires 4 or more positions.");
             }
 
-            if (!Coords.First().Equals(Coords.Last()))
+            if (!coords.First().Equals(coords.Last()))
             {
                 throw new ArgumentException("The first and last value must be equivalent.", "coordinates");
             }

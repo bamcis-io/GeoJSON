@@ -21,50 +21,61 @@ The library does not support section 6 of RFC 7946, extending GeoJSON with Forei
 
 Given some GeoJSON data, such as:
 
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [ 102.0, 0.5 ]
-      },
-      "properties": {
-        "prop0": "value0"
-      }
-    }
+```json
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [ 102.0, 0.5 ]
+  },
+  "properties": {
+    "prop0": "value0"
+  }
+}
+```
 
 You can receive the text and deserialize it to a GeoJSON object
 
-    GeoJson data = JsonConvert.DeserializeObject<GeoJson>(jsonString);
+```csharp
+GeoJson data = JsonConvert.DeserializeObject<GeoJson>(jsonString);
+```
 
 Once the data is deserialized, you can cast it to its actual type
 
-    switch (data.Type)
+```csharp
+switch (data.Type)
+{
+    case GeoJsonType.Feature:
     {
-        case GeoJsonType.Feature:
-        {
-            Feature feature = (Feature)data;
-            break;
-        }
-        ...
+        Feature feature = (Feature)data;
+        break;
     }
+    ...
+}
+```
 
 ### Example 2
 If you know what kind of GeoJSON you're receiving, you can deserialize to it directly:
 
-    FeatureCollection Col = FeatureCollection.FromJson(data);
+```csharp
+FeatureCollection col = FeatureCollection.FromJson(data);
+```
 
 And also go back to JSON data:
 
-    string Json = Col.ToJson(Formatting.Idented);
+```csharp
+string json = col.ToJson(Formatting.Idented);
+```
 
 ### Example 3
 
 Or you can create a GeoJSON object and serialize it:
-
-    Position Pos1 = new Position(100.0, 0.5);
-	Position Pos2 = new Position(101.0, 1.0);
-	MultiPoint Mp = new MultiPoint(new Position[] {Pos1, Pos2});
-	string Json = JsonConvert.Serialize(Mp);
+```csharp
+Position pos1 = new Position(100.0, 0.5);
+Position pos2 = new Position(101.0, 1.0);
+MultiPoint mp = new MultiPoint(new Position[] {pos1, pos2});
+string json = JsonConvert.Serialize(mp);
+```
 
 ### Usage Notes
 
@@ -79,6 +90,9 @@ The Feature **'Properties'** property implements an `IDictionary<string, dynamic
 be sent.
 
 ## Revision History
+
+### 2.1.1
+Added validation for latitude and longitude values in `Position`.
 
 ### 2.1.0
 Added a method to remove interior linear rings from a `Polygon` object.

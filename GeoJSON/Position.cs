@@ -64,6 +64,16 @@ namespace BAMCIS.GeoJSON
                 throw new ArgumentOutOfRangeException("longitude", "The longitude cannot be NaN or infinity.");
             }
 
+            if (longitude < -180 || longitude > 180)
+            {
+                throw new ArgumentOutOfRangeException("longitude", "Longitude must be between -180 and 180 degrees, inclusive.");
+            }
+
+            if (latitude < -90 || latitude > 90)
+            {
+                throw new ArgumentOutOfRangeException("latitude", "Latitude must be between -90 and 90 degrees, inclusive.");
+            }
+
             if (double.IsInfinity(elevation))
             {
                 throw new ArgumentOutOfRangeException("elevation", "The elevation cannot be infinity.");
@@ -109,17 +119,17 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            Position Other = (Position)obj;
+            Position other = (Position)obj;
 
-            bool Temp = this.Latitude == Other.Latitude &&
-               this.Longitude == Other.Longitude;
+            bool temp = this.Latitude == other.Latitude &&
+               this.Longitude == other.Longitude;
 
-            if (!double.IsNaN(this.Elevation) || !double.IsNaN(Other.Elevation))
+            if (!double.IsNaN(this.Elevation) || !double.IsNaN(other.Elevation))
             {
-                Temp = Temp && (this.Elevation == Other.Elevation);
+                temp = temp && (this.Elevation == other.Elevation);
             }
 
-            return Temp;
+            return temp;
         }
 
         public bool Equals(Position other)
@@ -130,15 +140,15 @@ namespace BAMCIS.GeoJSON
             }
             else
             {
-                bool Temp = this.Latitude == other.Latitude &&
+                bool temp = this.Latitude == other.Latitude &&
                 this.Longitude == other.Longitude;
 
                 if (!double.IsNaN(this.Elevation) || !double.IsNaN(other.Elevation))
                 {
-                    Temp = Temp && (this.Elevation == other.Elevation);
+                    temp = temp && (this.Elevation == other.Elevation);
                 }
 
-                return Temp;
+                return temp;
             }
         }
 

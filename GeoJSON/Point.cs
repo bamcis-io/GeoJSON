@@ -96,22 +96,22 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            Point Other = (Point)obj;
+            Point other = (Point)obj;
 
-            bool BBoxEqual = true;
+            bool bBoxEqual = true;
 
-            if (this.BoundingBox != null && Other.BoundingBox != null)
+            if (this.BoundingBox != null && other.BoundingBox != null)
             {
-                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+                bBoxEqual = this.BoundingBox.SequenceEqual(other.BoundingBox);
             }
             else
             {
-                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+                bBoxEqual = (this.BoundingBox == null && other.BoundingBox == null);
             }
 
-            return this.Type == Other.Type &&
-                this.Coordinates == Other.Coordinates &&
-                BBoxEqual;
+            return this.Type == other.Type &&
+                this.Coordinates == other.Coordinates &&
+                bBoxEqual;
         }
 
         public override int GetHashCode()

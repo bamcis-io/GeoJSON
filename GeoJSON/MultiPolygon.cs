@@ -61,33 +61,33 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            MultiPolygon Other = (MultiPolygon)obj;
+            MultiPolygon other = (MultiPolygon)obj;
 
-            bool BBoxEqual = true;
+            bool bBoxEqual = true;
 
-            if (this.BoundingBox != null && Other.BoundingBox != null)
+            if (this.BoundingBox != null && other.BoundingBox != null)
             {
-                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+                bBoxEqual = this.BoundingBox.SequenceEqual(other.BoundingBox);
             }
             else
             {
-                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+                bBoxEqual = (this.BoundingBox == null && other.BoundingBox == null);
             }
 
-            bool CoordinatesEqual = true;
+            bool coordinatesEqual = true;
 
-            if (this.Coordinates != null && Other.Coordinates != null)
+            if (this.Coordinates != null && other.Coordinates != null)
             {
-                CoordinatesEqual = this.Coordinates.SequenceEqual(Other.Coordinates);
+                coordinatesEqual = this.Coordinates.SequenceEqual(other.Coordinates);
             }
             else
             {
-                CoordinatesEqual = (this.Coordinates == null && Other.Coordinates == null);
+                coordinatesEqual = (this.Coordinates == null && other.Coordinates == null);
             }
 
-            return this.Type == Other.Type &&
-                CoordinatesEqual &&
-                BBoxEqual;
+            return this.Type == other.Type &&
+                coordinatesEqual &&
+                bBoxEqual;
         }
 
         public override int GetHashCode()

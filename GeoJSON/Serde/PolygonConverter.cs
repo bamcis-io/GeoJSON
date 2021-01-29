@@ -36,14 +36,14 @@ namespace BAMCIS.GeoJSON.Serde
         /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JObject Token = JObject.Load(reader);
+            JObject token = JObject.Load(reader);
 
-            IEnumerable<IEnumerable<Position>> Coordinates = Token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<Position>>>(serializer);
+            IEnumerable<IEnumerable<Position>> coordinates = token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<Position>>>(serializer);
 
             // Take this array of arrays of arrays and create linear rings
             // and use those to create create polygons
             return new Polygon(
-                Coordinates.Select(x => new LinearRing(x))
+                coordinates.Select(x => new LinearRing(x))
             );
         }
 
@@ -55,12 +55,12 @@ namespace BAMCIS.GeoJSON.Serde
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            Polygon Poly = (Polygon)value;
+            Polygon poly = (Polygon)value;
 
             JToken.FromObject(new
             {
-                type = Poly.Type,
-                coordinates = Poly.Coordinates.Select(x => x.Coordinates)
+                type = poly.Type,
+                coordinates = poly.Coordinates.Select(x => x.Coordinates)
             }).WriteTo(writer);
         }
 

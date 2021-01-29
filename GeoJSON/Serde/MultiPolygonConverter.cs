@@ -36,14 +36,14 @@ namespace BAMCIS.GeoJSON.Serde
         /// <returns></returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JObject Token = JObject.Load(reader);
+            JObject token = JObject.Load(reader);
 
-            IEnumerable<IEnumerable<IEnumerable<Position>>> Coordinates = Token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<IEnumerable<Position>>>>(serializer);
+            IEnumerable<IEnumerable<IEnumerable<Position>>> coordinates = token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<IEnumerable<Position>>>>(serializer);
 
             // Take this array of arrays of arrays and create linear rings
             // and use those to create create polygons
             return new MultiPolygon(
-                Coordinates
+                coordinates
                 .Select(x => new Polygon(
                     x.Select(y => new LinearRing(y))
                     )
@@ -59,12 +59,12 @@ namespace BAMCIS.GeoJSON.Serde
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            MultiPolygon Mp = (MultiPolygon)value;
+            MultiPolygon mp = (MultiPolygon)value;
 
             JToken.FromObject(new
             {
-                type = Mp.Type,
-                coordinates = Mp.Coordinates.Select(x => x.Coordinates.Select(y => y.Coordinates))
+                type = mp.Type,
+                coordinates = mp.Coordinates.Select(x => x.Coordinates.Select(y => y.Coordinates))
             }).WriteTo(writer);
         }
 

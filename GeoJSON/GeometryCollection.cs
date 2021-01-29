@@ -58,33 +58,33 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            GeometryCollection Other = (GeometryCollection)obj;
+            GeometryCollection other = (GeometryCollection)obj;
 
-            bool BBoxEqual = true;
+            bool bBoxEqual = true;
 
-            if (this.BoundingBox != null && Other.BoundingBox != null)
+            if (this.BoundingBox != null && other.BoundingBox != null)
             {
-                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+                bBoxEqual = this.BoundingBox.SequenceEqual(other.BoundingBox);
             }
             else
             {
-                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+                bBoxEqual = (this.BoundingBox == null && other.BoundingBox == null);
             }
 
-            bool GeometriesEqual = true;
+            bool geometriesEqual = true;
 
-            if (this.Geometries != null && Other.Geometries != null)
+            if (this.Geometries != null && other.Geometries != null)
             {
-                GeometriesEqual = this.Geometries.SequenceEqual(Other.Geometries);
+                geometriesEqual = this.Geometries.SequenceEqual(other.Geometries);
             }
             else
             {
-                GeometriesEqual = (this.Geometries == null && Other.Geometries == null);
+                geometriesEqual = (this.Geometries == null && other.Geometries == null);
             }
 
-            return this.Type == Other.Type &&
-                GeometriesEqual &&
-                BBoxEqual;
+            return this.Type == other.Type &&
+                geometriesEqual &&
+                bBoxEqual;
         }
 
         public override int GetHashCode()

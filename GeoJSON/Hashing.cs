@@ -14,17 +14,17 @@
         {
             unchecked // Overflow is fine, just wrap
             {
-                int Hash = 17;
+                int hash = 17;
 
-                foreach (object Item in args)
+                foreach (object item in args)
                 {
-                    if (Item != null)
+                    if (item != null)
                     {
-                        Hash = (Hash * 23) + Item.GetHashCode();
+                        hash = (hash * 23) + item.GetHashCode();
                     }
                 }
 
-                return Hash;
+                return hash;
             }
         }
     }

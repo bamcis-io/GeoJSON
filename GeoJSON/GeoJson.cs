@@ -14,9 +14,9 @@ namespace BAMCIS.GeoJSON
     {
         #region Private Fields
 
-        private static readonly Dictionary<Type, GeoJsonType> TypeToDerivedType;
-        private static readonly Dictionary<GeoJsonType, Type> DerivedTypeToType;
-        private bool Is3D;
+        private static readonly Dictionary<Type, GeoJsonType> typeToDerivedType;
+        private static readonly Dictionary<GeoJsonType, Type> derivedTypeToType;
+        private bool is3D;
 
         #endregion
 
@@ -51,7 +51,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         static GeoJson()
         {
-            TypeToDerivedType = new Dictionary<Type, GeoJsonType>()
+            typeToDerivedType = new Dictionary<Type, GeoJsonType>()
             {
                 { typeof(LineString), GeoJsonType.LineString },
                 { typeof(MultiLineString), GeoJsonType.MultiLineString },
@@ -64,7 +64,7 @@ namespace BAMCIS.GeoJSON
                 { typeof(FeatureCollection), GeoJsonType.FeatureCollection }
             };
 
-            DerivedTypeToType = TypeToDerivedType.ToDictionary(pair => pair.Value, pair => pair.Key);
+            derivedTypeToType = typeToDerivedType.ToDictionary(pair => pair.Value, pair => pair.Key);
         }
 
         /// <summary>
@@ -75,17 +75,17 @@ namespace BAMCIS.GeoJSON
         {
             this.Type = type;
             this.BoundingBox = boundingBox;
-            this.Is3D = is3D;
+            this.is3D = is3D;
 
             if (this.BoundingBox != null)
             {
-                int Length = boundingBox.Count();
+                int length = boundingBox.Count();
 
-                if (this.Is3D && Length != 6)
+                if (this.is3D && length != 6)
                 {
                     throw new ArgumentOutOfRangeException("boundingBox", "The bounding box must contain 6 elements for a 3D GeoJSON object.");
                 }
-                else if (!this.Is3D && Length != 4)
+                else if (!this.is3D && length != 4)
                 {
                     throw new ArgumentOutOfRangeException("boundingBox", "The bounding box must contain 4 elements for a 2D GeoJSON object.");
                 }
@@ -102,7 +102,7 @@ namespace BAMCIS.GeoJSON
         /// <returns></returns>
         public bool IsThreeDimensional()
         {
-            return this.Is3D;
+            return this.is3D;
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace BAMCIS.GeoJSON
         /// <returns>The .NET type that corresponds to the GeoJson type</returns>
         public static Type GetType(GeoJsonType type)
         {
-            return DerivedTypeToType[type];
+            return derivedTypeToType[type];
         }
 
         public abstract override bool Equals(object obj);

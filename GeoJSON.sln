@@ -1,15 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoJSON", "GeoJSON\GeoJSON.csproj", "{13B19F69-F3B6-497E-A9E0-D6DFCC533EC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoJSON", "GeoJSON\GeoJSON.csproj", "{13B19F69-F3B6-497E-A9E0-D6DFCC533EC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoJSON.Tests", "GeoJSON.Tests\GeoJSON.Tests.csproj", "{457C0EFB-99D9-46DB-8949-B5B90A855847}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoJSON.Tests", "GeoJSON.Tests\GeoJSON.Tests.csproj", "{457C0EFB-99D9-46DB-8949-B5B90A855847}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D5ED7550-3703-4250-B3F5-B3DFB135A6A5}"
 	ProjectSection(SolutionItems) = preProject
-		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject

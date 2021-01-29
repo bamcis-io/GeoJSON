@@ -1,6 +1,5 @@
 ﻿using BAMCIS.GeoJSON.Serde;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -77,35 +76,35 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            Feature Other = (Feature)obj;
+            Feature other = (Feature)obj;
 
-            bool BBoxEqual = true;
+            bool bBoxEqual = true;
 
-            if (this.BoundingBox != null && Other.BoundingBox != null)
+            if (this.BoundingBox != null && other.BoundingBox != null)
             {
-                BBoxEqual = this.BoundingBox.SequenceEqual(Other.BoundingBox);
+                bBoxEqual = this.BoundingBox.SequenceEqual(other.BoundingBox);
             }
             else
             {
-                BBoxEqual = (this.BoundingBox == null && Other.BoundingBox == null);
+                bBoxEqual = (this.BoundingBox == null && other.BoundingBox == null);
             }
 
-            bool PropertiesEqual = true;
+            bool propertiesEqual = true;
 
-            if (this.Properties != null && Other.Properties != null)
+            if (this.Properties != null && other.Properties != null)
             {
-                PropertiesEqual = this.Properties.Keys.SequenceEqual(Other.Properties.Keys);
+                propertiesEqual = this.Properties.Keys.SequenceEqual(other.Properties.Keys);
             }
             else
             {
-                PropertiesEqual = (this.Properties == null && Other.Properties == null);
+                propertiesEqual = (this.Properties == null && other.Properties == null);
             }
 
 
-            return this.Type == Other.Type &&
-                this.Geometry == Other.Geometry &&
-                BBoxEqual &&
-                PropertiesEqual;
+            return this.Type == other.Type &&
+                this.Geometry == other.Geometry &&
+                bBoxEqual &&
+                propertiesEqual;
         }
 
         public override int GetHashCode()

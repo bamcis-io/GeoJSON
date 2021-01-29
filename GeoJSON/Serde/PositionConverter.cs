@@ -36,18 +36,18 @@ namespace BAMCIS.GeoJSON.Serde
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             // This is an array of doubles
-            JArray Token = JArray.Load(reader);
+            JArray token = JArray.Load(reader);
 
-            double Longitude = Token.ElementAt(0).ToObject<double>(serializer);
-            double Latitude = Token.ElementAt(1).ToObject<double>(serializer);
-            double Elevation = double.NaN;
+            double longitude = token.ElementAt(0).ToObject<double>(serializer);
+            double latitude = token.ElementAt(1).ToObject<double>(serializer);
+            double elevation = double.NaN;
 
-            if (Token.Count == 3)
+            if (token.Count == 3)
             {
-                Elevation = Token.ElementAt(2).ToObject<double>(serializer);
+                elevation = token.ElementAt(2).ToObject<double>(serializer);
             }
 
-            return new Position(Longitude, Latitude, Elevation);
+            return new Position(longitude, latitude, elevation);
         }
 
         /// <summary>
@@ -58,15 +58,15 @@ namespace BAMCIS.GeoJSON.Serde
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            Position Pos = (Position)value;
+            Position pos = (Position)value;
 
-            if (Pos.HasElevation())
+            if (pos.HasElevation())
             {
-                JToken.FromObject(new double[3] { Pos.Longitude, Pos.Latitude, Pos.Elevation }).WriteTo(writer);
+                JToken.FromObject(new double[3] { pos.Longitude, pos.Latitude, pos.Elevation }).WriteTo(writer);
             }
             else
             {
-                JToken.FromObject(new double[2] { Pos.Longitude, Pos.Latitude }).WriteTo(writer);
+                JToken.FromObject(new double[2] { pos.Longitude, pos.Latitude }).WriteTo(writer);
             }
         }
 
