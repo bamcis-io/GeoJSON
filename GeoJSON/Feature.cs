@@ -1,5 +1,6 @@
 ﻿using BAMCIS.GeoJSON.Serde;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,6 +28,12 @@ namespace BAMCIS.GeoJSON
         [JsonProperty(PropertyName = "properties")]
         public IDictionary<string, dynamic> Properties { get; }
 
+        /// <summary>
+        /// As a property, this is represented as a string
+        /// </summary>
+        [JsonProperty(PropertyName = "id", NullValueHandling = NullValueHandling.Ignore)]
+        public FeatureId Id { get; }
+
         #endregion
 
         #region Constructors
@@ -37,10 +44,11 @@ namespace BAMCIS.GeoJSON
         /// <param name="geometry">The geometry to create the feature from</param>
         /// <param name="properties">The feature properties</param>
         [JsonConstructor]
-        public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null, IEnumerable<double> boundingBox = null) : base(GeoJsonType.Feature, geometry == null ? false : geometry.IsThreeDimensional(), boundingBox)
+        public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null, IEnumerable<double> boundingBox = null, FeatureId id = null) : base(GeoJsonType.Feature, geometry == null ? false : geometry.IsThreeDimensional(), boundingBox)
         {
             this.Geometry = geometry; // Geometry can be null
             this.Properties = properties ?? new Dictionary<string, dynamic>();
+            this.Id = id; // id can be null
         }
 
         #endregion

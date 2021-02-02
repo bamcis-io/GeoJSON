@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     <RootNamespace>BAMCIS.GeoJSON</RootNamespace>
-    <Version>2.1.1</Version>
+    <Version>2.2.0</Version>
     <Authors>Michael Haken</Authors>
     <Company>bamcis.io</Company>
     <Description>A .NET Core library for serializing and deserializing GeoJSON formatted JSON data. Complies with RFC 7946.</Description>
@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/bamcis-io/GeoJSON</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>GeoJSON RFC7946</PackageTags>
-    <PackageReleaseNotes>Added latitude and longitude validation of Position objects.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Id property for Feature.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>GeoJSON.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   
 </Project>
