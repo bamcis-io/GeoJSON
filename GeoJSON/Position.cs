@@ -14,7 +14,9 @@ namespace BAMCIS.GeoJSON
         #region Public Properties
 
         /// <summary>
-        /// The position's longitude or easting
+        /// The position's longitude or easting, valid values of
+        /// -180 to 180. Set IgnorePositionValidation in the GeoJsonConfig
+        /// class to ignore
         /// </summary>
         [JsonProperty(PropertyName = "longitude")]
         public double Longitude { get; }
@@ -64,14 +66,20 @@ namespace BAMCIS.GeoJSON
                 throw new ArgumentOutOfRangeException("longitude", "The longitude cannot be NaN or infinity.");
             }
 
-            if (longitude < -180 || longitude > 180)
+            if (!GeoJsonConfig.IgnoreLongitudeValidation)
             {
-                throw new ArgumentOutOfRangeException("longitude", "Longitude must be between -180 and 180 degrees, inclusive.");
+                if (longitude < -180 || longitude > 180)
+                {
+                    throw new ArgumentOutOfRangeException("longitude", "Longitude must be between -180 and 180 degrees, inclusive.");
+                }
             }
 
-            if (latitude < -90 || latitude > 90)
+            if (!GeoJsonConfig.IgnoreLatitudeValidation)
             {
-                throw new ArgumentOutOfRangeException("latitude", "Latitude must be between -90 and 90 degrees, inclusive.");
+                if (latitude < -90 || latitude > 90)
+                {
+                    throw new ArgumentOutOfRangeException("latitude", "Latitude must be between -90 and 90 degrees, inclusive.");
+                }
             }
 
             if (double.IsInfinity(elevation))
