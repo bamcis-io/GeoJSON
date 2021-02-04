@@ -8,6 +8,7 @@ An implementation of GeoJSON written in .NET Core 2.0. The library complies with
   * [Example 2](#example-2)
   * [Example 3](#example-3)
   * [Usage Notes](#usage-notes)
+  * [Global Configuration](#global-configuration)
 - [Revision History](#revision-history)
 
 
@@ -79,17 +80,46 @@ string json = JsonConvert.Serialize(mp);
 
 ### Usage Notes
 
-Each of the 9 GeoJSON types: **Feature**, **FeatureCollection**, **GeometryCollection**, **LineString**, **MultiLineString**, **MultiPoint**, **MultiPolygon**,
-**Point**, and **Polygon** all have convenience methods ToJson() and FromJson() to make serialization and deserialization easy.
+Each of the 9 GeoJSON types: **Feature**, **FeatureCollection**, **GeometryCollection**, **LineString**, **MultiLineString**, **MultiPoint**, **MultiPolygon**, **Point**, and **Polygon** all have convenience methods ToJson() and FromJson() to make serialization and deserialization easy.
 
-There are two additional types that can be used. A **LinearRing** is a LineString that is connected as the start and end and forms
-the basis of a polygon. You can also use the abstract **Geometry** class that encompasses LineString, MultiLineString, MultiPoint, MultiPolygon,
-Point, and Polygon.
+There are two additional types that can be used. A **LinearRing** is a LineString that is connected as the start and end and forms the basis of a polygon. You can also use the abstract **Geometry** class that encompasses LineString, MultiLineString, MultiPoint, MultiPolygon, Point, and Polygon.
 
-The Feature **'Properties'** property implements an `IDictionary<string, dynamic>` in order to accomodate any type of property structure that may 
-be sent.
+The Feature **'Properties'** property implements an `IDictionary<string, dynamic>` in order to accomodate any type of property structure that may be sent.
+
+### Global Configuration
+
+This library provides a global configuration class, `GeoJsonConfig`. Currently, the config offers a way to ignore the validation of latitude and longitude coordinates. For example, given this input:
+
+```json
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [ 200.0, 65000.5 ]
+  },
+  "properties": {
+    "prop0": "value0"
+  }
+}
+```
+
+We would expect this operation to throw an `ArgumentOutOfRangeException` due to the coordinate values.
+
+```csharp
+Feature geo = JsonConvert.DeserializeObject<Feature>(content);
+```
+
+To ignore the validation, do this:
+
+```csharp
+GeoJsonConfig.IgnorePositionValidation();
+Feature geo = JsonConvert.DeserializeObject<Feature>(content);
+```
 
 ## Revision History
+
+### 2.2.0
+Added an Id property to in `Feature`. Also added a global config object that can be used to ignore validation of coordinate values.
 
 ### 2.1.1
 Added validation for latitude and longitude values in `Position`.
