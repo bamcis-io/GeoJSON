@@ -134,10 +134,27 @@ namespace GeoJSON.Tests
         public void FeatureOutOfRangeTest()
         {
             // ARRANGE
+            GeoJsonConfig.EnforcePositionValidation();
             string content = File.ReadAllText("feature_out_of_range.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
 
             // ACT & ASSERT
             Assert.Throws<ArgumentOutOfRangeException>(() => JsonConvert.DeserializeObject<Feature>(content));         
+        }
+
+        [Fact]
+        public void FeatureOutOfRangeTestIgnoreValidation()
+        {
+            // ARRANGE
+            GeoJsonConfig.IgnorePositionValidation();
+            string content = File.ReadAllText("feature_out_of_range.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
+
+            // ACT
+            Feature geo = JsonConvert.DeserializeObject<Feature>(content);
+            string content2 = JsonConvert.SerializeObject(geo);
+            Feature geo2 = JsonConvert.DeserializeObject<Feature>(content2);
+
+            // ASSERT
+            Assert.True(geo.Equals(geo2));
         }
 
         [Fact]
