@@ -7,6 +7,7 @@ An implementation of GeoJSON written in .NET Core 2.0. The library complies with
   * [Example 1](#example-1)
   * [Example 2](#example-2)
   * [Example 3](#example-3)
+  * [Example 4](#example-4)
   * [Usage Notes](#usage-notes)
   * [Global Configuration](#global-configuration)
 - [Revision History](#revision-history)
@@ -78,6 +79,52 @@ MultiPoint mp = new MultiPoint(new Position[] {pos1, pos2});
 string json = JsonConvert.Serialize(mp);
 ```
 
+### Example 4
+The library also supports conversion of `Geometry` objects to and from Well-Known Binary (WKB). For example:
+
+```json
+{
+  "type": "Point",
+  "coordinates": [ 2.0, 4.0 ]
+}
+```
+
+```csharp
+Point point = new Point(102.0, 0.5);
+byte[] wkb = point.ToWkb();
+point = Geometry.FromWkb<Point>(wkb);
+```
+
+The binary produced is `0x000000000140000000000000004010000000000000`. You can also convert this way.
+
+```csharp
+Point point = new Point(102.0, 0.5);
+byte[] wkb = point.ToWkb();
+Geometry geo = Point.FromWkb(wkb)
+point = (Point)geo;
+```
+
+You can also specify the endianness of the binary encoding (the default is LITTLE).
+
+```csharp
+Point point = new Point(102.0, 0.5);
+byte[] wkb = point.ToWkb(Endianness.BIG);
+Geometry geo = Point.FromWkb(wkb)
+point = (Point)geo;
+```
+
+Finally, you can use the `WkbConverter` class directly.
+
+```csharp
+Point point = new Point(new Position(2.0, 4.0));
+byte[] bytes = WkbConverter.ToBinary(point, Endianness.BIG);
+```
+
+```csharp
+byte[] bytes = HexStringToByteArray("000000000140000000000000004010000000000000");
+Point point = WkbConverter.FromBinary<Point>(bytes);
+```
+
 ### Usage Notes
 
 Each of the 9 GeoJSON types: **Feature**, **FeatureCollection**, **GeometryCollection**, **LineString**, **MultiLineString**, **MultiPoint**, **MultiPolygon**, **Point**, and **Polygon** all have convenience methods ToJson() and FromJson() to make serialization and deserialization easy.
@@ -117,6 +164,9 @@ Feature geo = JsonConvert.DeserializeObject<Feature>(content);
 ```
 
 ## Revision History
+
+### 2.3.0
+Added Well-Known Binary serialization and deserialization support for `Geometry` objects.
 
 ### 2.2.0
 Added an Id property to in `Feature`. Also added a global config object that can be used to ignore validation of coordinate values.
