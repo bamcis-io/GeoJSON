@@ -1,5 +1,4 @@
 ﻿using BAMCIS.GeoJSON.Serde;
-using BAMCIS.GeoJSON.Wkb;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -61,36 +60,6 @@ namespace BAMCIS.GeoJSON
         public static new Geometry FromJson(string json)
         {
             return JsonConvert.DeserializeObject<Geometry>(json);
-        }
-
-        /// <summary>
-        /// Deserialize WKB byte array to Geometry.
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
-        public static Geometry FromWkb(byte[] bytes)
-        {
-            return WkbConverter.FromBinary(bytes);
-        }
-
-        /// <summary>
-        /// Deserialize WKB byte array to Geometry.
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
-        public static T FromWkb<T>(byte[] bytes) where T : Geometry
-        {
-            return WkbConverter.FromBinary<T>(bytes);
-        }
-
-        /// <summary>
-        /// Serialize this geometry object to WKB
-        /// </summary>
-        /// <param name="endianness">The default is LITTLE</param>
-        /// <returns></returns>
-        public byte[] ToWkb(Endianness endianness = Endianness.LITTLE)
-        {
-            return WkbConverter.ToBinary(this, endianness);
         }
 
         /// <summary>

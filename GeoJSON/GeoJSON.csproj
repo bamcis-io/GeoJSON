@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard1.6;netstandard2.0;net45</TargetFrameworks>
     <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     <RootNamespace>BAMCIS.GeoJSON</RootNamespace>
-    <Version>2.3.0</Version>
+    <Version>2.2.0</Version>
     <Authors>Michael Haken</Authors>
     <Company>bamcis.io</Company>
     <Description>A .NET Core library for serializing and deserializing GeoJSON formatted JSON data. Complies with RFC 7946.</Description>
@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/bamcis-io/GeoJSON</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>GeoJSON RFC7946</PackageTags>
-    <PackageReleaseNotes>Added Well-Known Binary serialization and deserialization support for `Geometry` objects.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Id property for Feature.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>GeoJSON.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>

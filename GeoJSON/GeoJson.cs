@@ -1,5 +1,4 @@
 ﻿using BAMCIS.GeoJSON.Serde;
-using BAMCIS.GeoJSON.Wkb;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
