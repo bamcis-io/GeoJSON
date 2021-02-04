@@ -12,7 +12,6 @@ namespace BAMCIS.GeoJSON
     [JsonConverter(typeof(InheritanceBlockerConverter))]
     public class Point : Geometry
     {
-
         #region Public Properties
 
         /// <summary>
