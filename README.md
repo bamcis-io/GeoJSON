@@ -165,6 +165,9 @@ Feature geo = JsonConvert.DeserializeObject<Feature>(content);
 
 ## Revision History
 
+### 2.3.1
+Fixed the Polygon serde CanConvert method.
+
 ### 2.3.0
 Added Well-Known Binary serialization and deserialization support for `Geometry` objects.
 

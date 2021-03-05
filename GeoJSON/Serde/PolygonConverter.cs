@@ -23,7 +23,7 @@ namespace BAMCIS.GeoJSON.Serde
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(MultiPolygon);
+            return objectType == typeof(Polygon);
         }
 
         /// <summary>
