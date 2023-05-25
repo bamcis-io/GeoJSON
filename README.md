@@ -172,7 +172,7 @@ Fixed the Polygon serde CanConvert method.
 Added Well-Known Binary serialization and deserialization support for `Geometry` objects.
 
 ### 2.2.0
-Added an Id property to in `Feature`. Also added a global config object that can be used to ignore validation of coordinate values.
+Added an Id property to `Feature`. Also added a global config object that can be used to ignore validation of coordinate values.
 
 ### 2.1.1
 Added validation for latitude and longitude values in `Position`.
