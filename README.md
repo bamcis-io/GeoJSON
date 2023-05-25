@@ -66,7 +66,7 @@ FeatureCollection col = FeatureCollection.FromJson(data);
 And also go back to JSON data:
 
 ```csharp
-string json = col.ToJson(Formatting.Idented);
+string json = col.ToJson(Formatting.Indented);
 ```
 
 ### Example 3
@@ -131,7 +131,7 @@ Each of the 9 GeoJSON types: **Feature**, **FeatureCollection**, **GeometryColle
 
 There are two additional types that can be used. A **LinearRing** is a LineString that is connected as the start and end and forms the basis of a polygon. You can also use the abstract **Geometry** class that encompasses LineString, MultiLineString, MultiPoint, MultiPolygon, Point, and Polygon.
 
-The Feature **'Properties'** property implements an `IDictionary<string, dynamic>` in order to accomodate any type of property structure that may be sent.
+The Feature **'Properties'** property implements an `IDictionary<string, dynamic>` in order to accommodate any type of property structure that may be sent.
 
 ### Global Configuration
 
@@ -199,10 +199,10 @@ Enabled the use of the bounding box property on all GeoJSON types.
 Actually fixed targeting `netstandard1.6` instead of v1.6.1.
 
 ### 1.1.1
-Fixed targetting of netstandard1.6, dropped JSON.NET to 9.0.1. Added `netstandard2.0` and `net45` as target frameworks.
+Fixed targeting of netstandard1.6, dropped JSON.NET to 9.0.1. Added `netstandard2.0` and `net45` as target frameworks.
 
 ### 1.1.0
-Retargetted library to netstandard1.6.
+Retargeted library to netstandard1.6.
 
 ### 1.0.0
 Initial release of the library.
