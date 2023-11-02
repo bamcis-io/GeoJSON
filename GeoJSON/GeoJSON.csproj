@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     <RootNamespace>BAMCIS.GeoJSON</RootNamespace>
     <Version>2.3.1</Version>
@@ -11,7 +10,8 @@
     <Copyright>bamcis.io</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageLicenseUrl>
+    </PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/bamcis-io/GeoJSON</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bamcis-io/GeoJSON</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
@@ -20,21 +20,15 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>GeoJSON.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <PackageLicenseFile></PackageLicenseFile>
+    <PackageLicenseFile>
+    </PackageLicenseFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-  
 </Project>

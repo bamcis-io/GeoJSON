@@ -10,7 +10,7 @@ namespace BAMCIS.GeoJSON
     /// <summary>
     /// A base abstract class for geometry types
     /// </summary>
-    [JsonConverter(typeof(GeometryConverter))]
+    
     public abstract class Geometry : GeoJson
     {
         #region Private Fields
@@ -58,6 +58,8 @@ namespace BAMCIS.GeoJSON
 
         #region Public Methods
 
+        #region Converters
+
         public static new Geometry FromJson(string json)
         {
             return JsonConvert.DeserializeObject<Geometry>(json);
@@ -93,6 +95,8 @@ namespace BAMCIS.GeoJSON
             return WkbConverter.ToBinary(this, endianness);
         }
 
+        
+
         /// <summary>
         /// Gets the appropriate class type corresponding to the enum
         /// representing the type
@@ -110,6 +114,10 @@ namespace BAMCIS.GeoJSON
                 throw new ArgumentException($"The type {type} is not a valid geometry type.");
             }
         }
+
+        #endregion Converters
+
+        #region Equality Evaluators
 
         public static bool operator ==(Geometry left, Geometry right)
         {
@@ -134,6 +142,19 @@ namespace BAMCIS.GeoJSON
         public abstract override bool Equals(object obj);
 
         public abstract override int GetHashCode();
+
+        #endregion Equality Evaluators
+
+        #region Topographic Operations
+
+        public bool Contains(Geometry otherGeometry)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        #endregion Topographic Operations
 
         #endregion
     }
