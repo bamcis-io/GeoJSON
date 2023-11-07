@@ -7,6 +7,8 @@ using System.Linq;
 
 namespace BAMCIS.GeoJSON
 {
+    
+
     /// <summary>
     /// A base abstract class for the implementation of GeoJson
     /// </summary>
@@ -17,7 +19,7 @@ namespace BAMCIS.GeoJSON
 
         private static readonly Dictionary<Type, GeoJsonType> typeToDerivedType;
         private static readonly Dictionary<GeoJsonType, Type> derivedTypeToType;
-        private bool is3D;
+        private readonly bool is3D;
 
         #endregion
 
@@ -29,19 +31,6 @@ namespace BAMCIS.GeoJSON
         [JsonProperty(PropertyName = "type")]
         public GeoJsonType Type { get; }
 
-        /// <summary>
-        /// A GeoJSON object MAY have a member named "bbox" to include
-        /// information on the coordinate range for its Geometries, Features, or
-        /// FeatureCollections.The value of the bbox member MUST be an array of
-        /// length 2*n where n is the number of dimensions represented in the
-        /// contained geometries, with all axes of the most southwesterly point
-        /// followed by all axes of the more northeasterly point. The axes order
-        /// of a bbox follows the axes order of geometries.
-        /// 
-        /// Takes the form [west, south, east, north] for 2D or of the form [west, south, min-altitude, east, north, max-altitude] for 3D 
-        /// </summary>
-        [JsonProperty(PropertyName = "bbox", NullValueHandling = NullValueHandling.Ignore)]
-        public IEnumerable<double> BoundingBox { get; }
 
         #endregion
 
@@ -54,6 +43,7 @@ namespace BAMCIS.GeoJSON
         {
             typeToDerivedType = new Dictionary<Type, GeoJsonType>()
             {
+                { typeof(LineSegment), GeoJsonType.LineSegment },
                 { typeof(LineString), GeoJsonType.LineString },
                 { typeof(MultiLineString), GeoJsonType.MultiLineString },
                 { typeof(MultiPoint), GeoJsonType.MultiPoint },
@@ -72,25 +62,10 @@ namespace BAMCIS.GeoJSON
         /// Base constructor that all derived classes must implement
         /// </summary>
         /// <param name="type">The type of the GeoJson object</param>
-        protected GeoJson(GeoJsonType type, bool is3D, IEnumerable<double> boundingBox = null)
+        protected GeoJson(GeoJsonType type, bool is3D)
         {
             this.Type = type;
-            this.BoundingBox = boundingBox;
             this.is3D = is3D;
-
-            if (this.BoundingBox != null)
-            {
-                int length = boundingBox.Count();
-
-                if (this.is3D && length != 6)
-                {
-                    throw new ArgumentOutOfRangeException("boundingBox", "The bounding box must contain 6 elements for a 3D GeoJSON object.");
-                }
-                else if (!this.is3D && length != 4)
-                {
-                    throw new ArgumentOutOfRangeException("boundingBox", "The bounding box must contain 4 elements for a 2D GeoJSON object.");
-                }
-            }
         }
 
         #endregion

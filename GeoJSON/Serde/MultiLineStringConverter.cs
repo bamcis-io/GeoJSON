@@ -38,9 +38,11 @@ namespace BAMCIS.GeoJSON.Serde
         {
             JObject token = JObject.Load(reader);
 
-            IEnumerable<IEnumerable<Position>> coordinates = token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<Position>>>(serializer);
+            IEnumerable<IEnumerable<Coordinate>> coordinates = token.GetValue("Coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<Coordinate>>>(serializer);
 
-            return new MultiLineString(coordinates.Select(x => new LineString(x)));
+            List<LineString> lineStrings = coordinates.Select(c => LineSegment.CoordinatesToLineString(c)).ToList();
+
+            return new MultiLineString(lineStrings);
         }
 
         /// <summary>
@@ -56,7 +58,7 @@ namespace BAMCIS.GeoJSON.Serde
             JToken.FromObject(new
             {
                 type = mls.Type,
-                coordinates = mls.Coordinates.Select(x => x.Coordinates)
+                coordinates = mls.LineStrings.Select(x => x.Points.Select(p => p.Coordinates))
             }).WriteTo(writer);
         }
 

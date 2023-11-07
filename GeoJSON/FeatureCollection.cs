@@ -20,6 +20,11 @@ namespace BAMCIS.GeoJSON
         [JsonProperty(PropertyName = "features")]
         public IEnumerable<Feature> Features { get; }
 
+        
+        [JsonProperty(PropertyName = "BoundingBox")]
+        [JsonIgnore]
+        public Rectangle BoundingBox { get; private set; }
+
         #endregion
 
         #region Constructors
@@ -29,9 +34,61 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="features">The features that are part of the feature collection</param>
         [JsonConstructor]
-        public FeatureCollection(IEnumerable<Feature> features, IEnumerable<double> boundingBox = null) : base(GeoJsonType.FeatureCollection, features.Any(x => x.IsThreeDimensional()), boundingBox)
+        public FeatureCollection(IEnumerable<Feature> features) : base(GeoJsonType.FeatureCollection, features.Any(x => x.IsThreeDimensional()))
         {
-            this.Features = features ?? throw new ArgumentNullException("features");
+            this.Features = features ?? throw new ArgumentNullException(nameof(features));
+
+            this.BoundingBox = FetchBoundingBox();
+
+    }
+
+        public Rectangle FetchBoundingBox()
+        {
+            double MaxLatitude = double.MinValue;
+            double MaxLongitude = double.MinValue;
+            double MinLatitude = double.MaxValue;
+            double MinLongitude = double.MaxValue;
+
+            foreach (Feature feature in this.Features)
+            {
+
+                if (feature.Geometry?.BoundingBox != null)
+                {
+                    if (MaxLatitude < (feature?.Geometry?.BoundingBox?.MaxLatitude ?? 0.0))
+                    {
+                        MaxLatitude = (double) ( feature?.Geometry?.BoundingBox.MaxLatitude );
+                    }
+
+                    if (MaxLongitude < (feature?.Geometry?.BoundingBox?.MaxLongitude ?? 0.0 ))
+                    {
+                        MaxLongitude = (double)feature.Geometry?.BoundingBox.MaxLongitude;
+                    }
+
+                    if (MinLatitude > (feature?.Geometry?.BoundingBox?.MinLatitude ?? 0.0 ))
+                    {
+                        MinLatitude = (double) feature?.Geometry.BoundingBox.MinLatitude;
+                    }
+
+                    if (MinLongitude > (feature?.Geometry?.BoundingBox?.MinLongitude ?? 0.0 ))
+                    {
+                        MinLongitude = (double) feature?.Geometry?.BoundingBox.MinLongitude;
+                    }
+                }
+                else
+                {
+                    MaxLatitude = 0;
+                    MaxLongitude = 0;
+                    MinLatitude = 0;
+                    MinLongitude = 0;
+                }
+            }
+
+            var LL = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
+            var UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
+            var UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
+
+            return new Rectangle(LL, LR, UL, UR);
         }
 
         #endregion

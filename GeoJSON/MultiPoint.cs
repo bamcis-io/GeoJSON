@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace BAMCIS.GeoJSON
@@ -9,7 +11,7 @@ namespace BAMCIS.GeoJSON
     /// <summary>
     /// For type "MultiPoint", the "coordinates" member is an array of positions.
     /// </summary>
-    [JsonConverter(typeof(InheritanceBlockerConverter))]
+    [JsonConverter(typeof(MultiPointConverter))]
     public class MultiPoint : Geometry
     {
         #region Public Properties
@@ -17,10 +19,16 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The coordinates of a multipoint are an array of positions
         /// </summary>
-        [JsonProperty(PropertyName = "coordinates")]
-        public IEnumerable<Position> Coordinates { get; }
+        [JsonProperty(PropertyName = "Points")]
+        [Description("Points")]
+        public IEnumerable<Point> Points { get; }
 
-        #endregion
+
+        [JsonProperty(PropertyName = "BoundingBox")]
+        [JsonIgnore]
+        public override Rectangle BoundingBox { get { return FetchBoundingBox(); } }
+
+        #endregion Public Properties
 
         #region Constructors
 
@@ -28,18 +36,51 @@ namespace BAMCIS.GeoJSON
         /// Creates a new multipoint object
         /// </summary>
         /// <param name="coordinates"></param>
-        public MultiPoint(IEnumerable<Position> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.MultiPoint, coordinates.Any(x => x.HasElevation()), boundingBox)
+        [JsonConstructor]
+        public MultiPoint([NotNull] IEnumerable<Coordinate> coordinates) : base(GeoJsonType.MultiPoint, coordinates.Any(x => x.HasElevation()))
         {
-            this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
+            if (coordinates == null)
+                throw new ArgumentNullException(nameof(Coordinate));
+
+            this.Points = coordinates.Select(c => new Point(c));
         }
 
-        #endregion
+        /// <summary>
+        /// Creates a new multipoint object
+        /// </summary>
+        /// <param name="coordinates"></param>
+        
+        public MultiPoint([NotNull] IEnumerable<IEnumerable<Coordinate>> coordinates) : base(GeoJsonType.MultiPoint, coordinates.Any(x => x.Any(y => y.HasElevation())))
+        {
+            var points = new List<Point>(); 
+        
+            foreach(var pointCoordinates in coordinates)
+            {
+                points.AddRange(pointCoordinates.Select(p => p.ToPoint()).ToList());
+            }
+
+            this.Points = points;
+        }
+
+        
+        
+        public MultiPoint([NotNull] IEnumerable<Point> points) : base(GeoJsonType.MultiPoint, points.Any(x => x.HasElevation()))
+        {
+            if (points == null)
+                throw new ArgumentNullException(nameof(Coordinate));
+
+            this.Points = points;
+        }
+
+        #endregion Constructors
 
         #region Public Methods
 
-        public static new MultiPoint FromJson(string json)
+        #region Comparers
+
+        public static new Point FromJson(string json)
         {
-            return JsonConvert.DeserializeObject<MultiPoint>(json);
+            return JsonConvert.DeserializeObject<Point>(json);
         }
 
         public override bool Equals(object obj)
@@ -69,13 +110,13 @@ namespace BAMCIS.GeoJSON
 
             bool coordinatesEqual = true;
 
-            if (this.Coordinates != null && other.Coordinates != null)
+            if (this.Points != null && other.Points != null)
             {
-                coordinatesEqual = this.Coordinates.SequenceEqual(other.Coordinates);
+                coordinatesEqual = this.Points.SequenceEqual(other.Points);
             }
             else
             {
-                coordinatesEqual = (this.Coordinates == null && other.Coordinates == null);
+                coordinatesEqual = (this.Points == null && other.Points == null);
             }
 
             return this.Type == other.Type &&
@@ -85,7 +126,7 @@ namespace BAMCIS.GeoJSON
 
         public override int GetHashCode()
         {
-            return Hashing.Hash(this.Type, this.Coordinates, this.BoundingBox);
+            return Hashing.Hash(this.Type, this.Points, this.BoundingBox);
         }
 
         public static bool operator ==(MultiPoint left, MultiPoint right)
@@ -107,6 +148,55 @@ namespace BAMCIS.GeoJSON
         {
             return !(left == right);
         }
+
+        #endregion Comparers
+
+
+        #region Topological Operations
+        public Rectangle FetchBoundingBox()
+        {
+
+            double MaxLatitude = double.MinValue;
+            double MaxLongitude = double.MinValue;
+            double MinLatitude = double.MaxValue;
+            double MinLongitude = double.MaxValue;
+
+            foreach (Point geometry in this.Points)
+            {
+                if (MaxLatitude < geometry.BoundingBox.MaxLatitude)
+                {
+                    MaxLatitude = geometry.BoundingBox.MaxLatitude;
+                }
+
+                if (MaxLongitude < geometry.BoundingBox.MaxLongitude)
+                {
+                    MaxLongitude = geometry.BoundingBox.MaxLongitude;
+                }
+
+                if (MinLatitude > geometry.BoundingBox.MinLatitude)
+                {
+                    MinLatitude = geometry.BoundingBox.MinLatitude;
+                }
+
+                if (MinLongitude > geometry.BoundingBox.MinLongitude)
+                {
+                    MinLongitude = geometry.BoundingBox.MinLongitude;
+                }
+            }
+
+            Point LL = new Point(new Coordinate(MinLongitude, MinLatitude));
+            Point LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
+            Point UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
+            Point UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
+
+            return new Rectangle(LL, LR, UL, UR);
+
+        }
+
+
+        #endregion Topological Operations
+
+
 
         #endregion
     }

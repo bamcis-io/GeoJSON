@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net7.0</TargetFrameworks>
     <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     <RootNamespace>BAMCIS.GeoJSON</RootNamespace>
     <Version>2.3.1</Version>
@@ -30,5 +30,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Extensions\Extensions.csproj" />
   </ItemGroup>
 </Project>

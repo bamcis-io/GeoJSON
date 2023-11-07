@@ -108,24 +108,27 @@ namespace BAMCIS.GeoJSON.Wkb
                     }
                 default:
                     {
-                        throw new NotSupportedException($"Unsupported WKB type {type.ToString()}.");
+                        throw new NotSupportedException($"Unsupported WKB type {type}.");
                     }
             }
         }
 
         private static Point PointFrom(EndianAwareBinaryReader reader)
         {
-            return new Point(new Position(reader.ReadDouble(), reader.ReadDouble()));
+            return new Point(new Coordinate(reader.ReadDouble(), reader.ReadDouble()));
         }
 
         private static LineString LineStringFrom(EndianAwareBinaryReader reader)
         {
             UInt32 amount = reader.ReadUInt32();
-            List<Position> coordinates = new List<Position>();
+            List<Point> coordinates = new List<Point>();
 
             for (int i = 0; i < amount; i++)
             {
-                coordinates.Add(new Position(reader.ReadDouble(), reader.ReadDouble()));
+                var pos = new Coordinate(reader.ReadDouble(),
+                                             reader.ReadDouble());
+
+                coordinates.Add(new Point(pos));
             }
 
             return new LineString(coordinates);
@@ -134,18 +137,20 @@ namespace BAMCIS.GeoJSON.Wkb
         private static Polygon PolygonFrom(EndianAwareBinaryReader reader)
         {
             int ringQuantity = reader.ReadInt32();
+            List<Coordinate> positions = new List<Coordinate>(ringQuantity);
             List<LinearRing> rings = new List<LinearRing>(ringQuantity);
-
             for (int i = 0; i < ringQuantity; i++)
             {
                 int numberOfPositions = reader.ReadInt32();
-                List<Position> coordinates = new List<Position>(numberOfPositions);
+                List<Coordinate> coordinates = new List<Coordinate>(numberOfPositions);
                 for (int j = 0; j < numberOfPositions; j++)
                 {
-                    coordinates.Add(new Position(reader.ReadDouble(), reader.ReadDouble()));
+                    coordinates.Add(new Coordinate(reader.ReadDouble(), reader.ReadDouble()));
                 }
 
-                rings.Add(new LinearRing(coordinates));
+                var ring = new LinearRing(coordinates);
+
+                rings.Add(ring);
             }
 
             return new Polygon(rings);
@@ -153,7 +158,7 @@ namespace BAMCIS.GeoJSON.Wkb
 
         private static MultiPoint MultiPointFrom(EndianAwareBinaryReader reader)
         {
-            List<Position> coordinates = new List<Position>();
+            List<Coordinate> coordinates = new List<Coordinate>();
             int numberOfGroups = reader.ReadInt32();
 
             for (int i = 0; i < numberOfGroups; i++)
@@ -164,7 +169,7 @@ namespace BAMCIS.GeoJSON.Wkb
 
                 for (int j = 0; j < numberOfPositions; j++)
                 {
-                    coordinates.Add(new Position(reader.ReadDouble(), reader.ReadDouble()));
+                    coordinates.Add(new Coordinate(reader.ReadDouble(), reader.ReadDouble()));
                 }
             }
 
@@ -237,11 +242,12 @@ namespace BAMCIS.GeoJSON.Wkb
         {
             writer.WriteEndianness();
             writer.Write((UInt32)WkbType.LineString);
-            writer.Write(lineString.Coordinates.Count());
+            var points = lineString.Points;
+            writer.Write(points.Count());
 
-            foreach (Position pos in lineString.Coordinates)
+            foreach (var point in points)
             {
-                WritePosition(writer, pos);
+                WritePosition(writer, point.Coordinates);
             }
         }
 
@@ -249,15 +255,16 @@ namespace BAMCIS.GeoJSON.Wkb
         {
             writer.WriteEndianness();
             writer.Write((UInt32)WkbType.Polygon);
-            writer.Write((UInt32)polygon.Coordinates.Count());
+            
+            writer.Write((UInt32) polygon.LinearRings.Count());
 
-            foreach (LinearRing linearRing in polygon.Coordinates)
+            foreach (LinearRing linearRing in polygon.LinearRings)
             {
-                writer.Write((UInt32)linearRing.Coordinates.Count());
+                writer.Write((UInt32) linearRing.Points.Count());
 
-                foreach (Position pos in linearRing.Coordinates)
+                foreach (Point pos in linearRing.Points)
                 {
-                    WritePosition(writer, pos);
+                    WritePosition(writer, pos.Coordinates);
                 }
             }
         }
@@ -266,11 +273,10 @@ namespace BAMCIS.GeoJSON.Wkb
         {
             writer.WriteEndianness();
             writer.Write((UInt32)WkbType.MultiPoint);
-            writer.Write((UInt32)multiPoint.Coordinates.Count());
+            writer.Write((UInt32)multiPoint.Points.Count());
 
-            foreach (Position pos in multiPoint.Coordinates)
+            foreach (Point point in multiPoint.Points)
             {
-                Point point = new Point(pos);
                 ToBinary(writer, point);
             }
         }
@@ -279,9 +285,9 @@ namespace BAMCIS.GeoJSON.Wkb
         {
             writer.WriteEndianness();
             writer.Write((UInt32)WkbType.MultiLineString);
-            writer.Write((UInt32)multiLineString.Coordinates.Count());
+            writer.Write((UInt32)multiLineString.LineStrings.Count());
 
-            foreach (LineString lineString in multiLineString.Coordinates)
+            foreach (LineString lineString in multiLineString.LineStrings)
             {
                 ToBinary(writer, lineString);
             }
@@ -291,9 +297,9 @@ namespace BAMCIS.GeoJSON.Wkb
         {
             writer.WriteEndianness();
             writer.Write((UInt32)WkbType.MultiPolygon);
-            writer.Write((UInt32)multiPolygon.Coordinates.Count());
+            writer.Write((UInt32)multiPolygon.Polygons.Count());
 
-            foreach (Polygon polygon in multiPolygon.Coordinates)
+            foreach (Polygon polygon in multiPolygon.Polygons)
             {
                 ToBinary(writer, polygon);
             }
@@ -352,12 +358,12 @@ namespace BAMCIS.GeoJSON.Wkb
                     }
                 default:
                     {
-                        throw new NotSupportedException($"The GeoJson type {geometry.Type.ToString()} is not supported for conversion to WKB.");
+                        throw new NotSupportedException($"The GeoJson type {geometry.Type} is not supported for conversion to WKB.");
                     }
             }
         }
 
-        private static EndianAwareBinaryWriter WritePosition(EndianAwareBinaryWriter writer, Position position)
+        private static EndianAwareBinaryWriter WritePosition(EndianAwareBinaryWriter writer, Coordinate position)
         {
             writer.Write(position.Longitude);
             writer.Write(position.Latitude);

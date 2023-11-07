@@ -21,7 +21,7 @@ namespace BAMCIS.GeoJSON.Serde
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(Position);
+            return objectType == typeof(Coordinate);
         }
 
         /// <summary>

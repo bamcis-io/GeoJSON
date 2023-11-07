@@ -5,18 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
+
 namespace BAMCIS.GeoJSON
 {
+    
+
     /// <summary>
     /// A base abstract class for geometry types
     /// </summary>
-    
-    public abstract class Geometry : GeoJson
+    [JsonConverter(typeof(GeometryConverter))]
+    public abstract class Geometry: GeoJson
     {
         #region Private Fields
 
         private static readonly Dictionary<Type, GeoJsonType> typeToDerivedType;
         private static readonly Dictionary<GeoJsonType, Type> derivedTypeToType;
+
+        [JsonProperty(PropertyName = "BoundingBox")]
+        [JsonIgnore]
+        public abstract Rectangle BoundingBox { get; }
+
 
         #endregion
 
@@ -29,7 +38,9 @@ namespace BAMCIS.GeoJSON
         {
             typeToDerivedType = new Dictionary<Type, GeoJsonType>()
             {
+                { typeof(LineSegment), GeoJsonType.LineSegment },
                 { typeof(LineString), GeoJsonType.LineString },
+                { typeof(LinearRing), GeoJsonType.LinearRing },
                 { typeof(MultiLineString), GeoJsonType.MultiLineString },
                 { typeof(MultiPoint), GeoJsonType.MultiPoint },
                 { typeof(MultiPolygon), GeoJsonType.MultiPolygon },
@@ -46,7 +57,42 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="type">The GeoJson type</param>
         [JsonConstructor]
-        protected Geometry(GeoJsonType type, bool is3D, IEnumerable<double> boundingBox = null) : base(type, is3D, boundingBox)
+        protected Geometry(GeoJsonType type, bool is3D) : base(type, is3D)
+        {
+            ConstructorEvaluator(type);
+        }
+
+
+        /// <summary>
+        /// Converts angles from Radians to Degrees
+        /// </summary>
+        /// <param name="radians"></param>
+        /// <returns></returns>
+        public static double RadiansToDegrees(double radians)
+        {
+            return ( radians * 180 / Math.PI );
+        }
+
+        /// <summary>
+        /// Converts angles from Degrees to Radians
+        /// </summary>
+        /// <param name="radians"></param>
+        /// <returns></returns>
+        public static double DegreesToRadians(double radians)
+        {
+            return ( radians * 180 / Math.PI );
+        }
+
+        /// <summary>
+        /// Each inherited class must implement this constructor
+        /// </summary>
+        /// <param name="type">The GeoJson type</param>
+        protected Geometry(IEnumerable<GeoJson> geometries = null) : base(GeoJsonType.Feature, geometries.FirstOrDefault()?.IsThreeDimensional() ?? false)
+        {
+            
+        }
+
+        protected static void ConstructorEvaluator(GeoJsonType type)
         {
             if (!derivedTypeToType.ContainsKey(type))
             {
@@ -62,7 +108,9 @@ namespace BAMCIS.GeoJSON
 
         public static new Geometry FromJson(string json)
         {
-            return JsonConvert.DeserializeObject<Geometry>(json);
+            var geometry = JsonConvert.DeserializeObject<Geometry>(json);
+
+            return geometry;
         }
 
         /// <summary>
@@ -143,19 +191,10 @@ namespace BAMCIS.GeoJSON
 
         public abstract override int GetHashCode();
 
+
         #endregion Equality Evaluators
-
-        #region Topographic Operations
-
-        public bool Contains(Geometry otherGeometry)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-        #endregion Topographic Operations
 
         #endregion
     }
+
 }

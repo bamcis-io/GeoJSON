@@ -23,7 +23,11 @@ namespace BAMCIS.GeoJSON
         [JsonProperty(PropertyName = "geometries")]
         public IEnumerable<Geometry> Geometries { get; }
 
-        #endregion
+        [JsonProperty(PropertyName = "BoundingBox")]
+        [JsonIgnore]
+        public override Rectangle BoundingBox { get; }
+
+        #endregion Public Properties
 
         #region Constructors 
 
@@ -32,19 +36,28 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="geometries">The geometries that are part of the collection</param>
         [JsonConstructor]
-        public GeometryCollection(IEnumerable<Geometry> geometries, IEnumerable<double> boundingBox = null) : base(GeoJsonType.GeometryCollection, geometries.Any(x => x.IsThreeDimensional()), boundingBox)
+        public GeometryCollection(IEnumerable<Geometry> geometries) : base(GeoJsonType.GeometryCollection, geometries.Any(x => x.IsThreeDimensional()))
         {
-            this.Geometries = geometries ?? throw new ArgumentNullException("geometries");
+            this.Geometries = geometries.ToList() ?? throw new ArgumentNullException("geometries");
+
+            this.BoundingBox = FetchBoundingBox();
         }
 
         #endregion
 
         #region Public Methods
 
+        #region Converters
+
         public new static GeometryCollection FromJson(string json)
         {
             return JsonConvert.DeserializeObject<GeometryCollection>(json);
         }
+
+
+        #endregion Converters
+
+        #region Equality Evaluators
 
         public override bool Equals(object obj)
         {
@@ -111,6 +124,68 @@ namespace BAMCIS.GeoJSON
         {
             return !(left == right);
         }
+
+        #endregion Equality Evaluators
+
+        #region Topological Operations
+
+        public Rectangle FetchBoundingBox()
+        {
+            double MaxLatitude = double.MinValue;
+            double MaxLongitude = double.MinValue;
+            double MinLatitude = double.MaxValue;
+            double MinLongitude = double.MaxValue;
+            bool allGeomsHaveEmptyBoundingBox = true;
+            foreach (var geometry in this.Geometries)
+            {
+                var bbox = geometry?.BoundingBox ?? null;
+
+                if (bbox != null)
+                {
+                    allGeomsHaveEmptyBoundingBox = false;
+                    if (MaxLatitude < bbox.MaxLatitude)
+                    {
+                        MaxLatitude = bbox.MaxLatitude;
+                    }
+
+                    if (MaxLongitude < bbox.MaxLongitude)
+                    {
+                        MaxLongitude = bbox.MaxLongitude;
+                    }
+
+                    if (MinLatitude > bbox.MinLatitude)
+                    {
+                        MinLatitude = bbox.MinLatitude;
+                    }
+
+                    if (MinLongitude > bbox.MinLongitude)
+                    {
+                        MinLongitude = bbox.MinLongitude;
+                    }
+                }
+                
+            }
+
+            if (allGeomsHaveEmptyBoundingBox)
+            {
+                return null;
+            }
+            else
+            {
+                Point LL = new Point(new Coordinate(MinLongitude, MinLatitude));
+                Point LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
+                Point UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
+                Point UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
+
+                return new Rectangle(LL, LR, UL, UR);
+
+            }
+            
+        }
+
+
+        #endregion Topological Operations
+
 
         #endregion
     }

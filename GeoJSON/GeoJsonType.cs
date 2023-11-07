@@ -12,6 +12,10 @@ namespace BAMCIS.GeoJSON
 
         LineString,
 
+        LineSegment,
+
+        LinearRing,
+
         MultiLineString,
 
         Polygon,
