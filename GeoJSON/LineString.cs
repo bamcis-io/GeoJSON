@@ -12,7 +12,7 @@ namespace BAMCIS.GeoJSON
     /// For type "LineString", the "coordinates" member is an array of two or
     /// more positions.
     /// </summary>
-    [JsonConverter(typeof(InheritanceBlockerConverter))]
+    [JsonConverter(typeof(LineStringConverter))]
     public class LineString : Geometry, 
                               IEnumerable<LineSegment>,
                               ILine<Point>,
@@ -33,8 +33,11 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The coordinates of a linestring are an array of positions
         /// </summary>
-        [JsonProperty(PropertyName = "Points")]
+        [JsonProperty(PropertyName = "LineSegments")]
         public IEnumerable<LineSegment> LineSegments { get; }
+
+        [JsonProperty(PropertyName = "coordinates")]
+        public IEnumerable<Coordinate> Coordinates { get { return Points.Select(p => p.Coordinates).ToList(); } }
 
         [JsonIgnore]
         public IEnumerable<Point> Points { get; init; }
@@ -75,14 +78,14 @@ namespace BAMCIS.GeoJSON
             this.LineSegments = ConvertPointsToLineSegments(points.ToList()) ?? throw new ArgumentNullException("lineSegments");
         }
 
-        public LineString(IEnumerable<IEnumerable<Coordinate>> positions) : base(GeoJsonType.LineString, PositionsToLineString(positions).Any(x => x.HasElevation()))
+        public LineString(IEnumerable<IEnumerable<Coordinate>> coordinates) : base(GeoJsonType.LineString, CoordinatesToPoints(coordinates).Any(x => x.HasElevation()))
         {
-            this.Points = PositionsToLineString(positions);
+            this.Points = CoordinatesToPoints(coordinates);
 
             this.LineSegments = ConvertPointsToLineSegments(this.Points.ToList()) ?? throw new ArgumentNullException("lineSegments");
         }
 
-        public static List<Point> PositionsToLineString(IEnumerable<IEnumerable<Coordinate>> positions)
+        public static List<Point> CoordinatesToPoints(IEnumerable<IEnumerable<Coordinate>> positions)
         {
             List<Point> points = positions.SelectMany(x => x).Select(x => new Point(x)).ToList();
 

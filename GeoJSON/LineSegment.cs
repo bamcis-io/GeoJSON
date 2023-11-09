@@ -229,7 +229,7 @@ namespace BAMCIS.GeoJSON
                 return true;
             }
 
-            if (ReferenceEquals(objCasted, null))
+            if (objCasted is null)
             {
                 return false;
             }
@@ -262,9 +262,9 @@ namespace BAMCIS.GeoJSON
 
         public static bool operator ==(LineSegment left, LineSegment right)
         {
-            if (ReferenceEquals(left, null))
+            if (left is null)
             {
-                return ReferenceEquals(right, null);
+                return right is null;
             }
 
             return left.P1 == right.P1 && left.P2 == right.P2;
@@ -282,17 +282,17 @@ namespace BAMCIS.GeoJSON
 
         public static bool operator <=(LineSegment left, LineSegment right)
         {
-            return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+            return left is null || left.CompareTo(right) <= 0;
         }
 
         public static bool operator >(LineSegment left, LineSegment right)
         {
-            return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+            return left is not null && left.CompareTo(right) > 0;
         }
 
         public static bool operator >=(LineSegment left, LineSegment right)
         {
-            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+            return left is null ? right is null : left.CompareTo(right) >= 0;
         }
 
         #endregion Comparables

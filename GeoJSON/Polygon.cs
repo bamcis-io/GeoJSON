@@ -86,7 +86,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates">The linear rings that make up the polygon</param>
         
-        public Polygon(LinearRing linearRing) : base(GeoJsonType.Polygon, linearRing.Any(x => x.IsThreeDimensional()))
+        public Polygon(LinearRing linearRing) : base(GeoJsonType.Polygon, linearRing.Any(x => x.HasElevation()))
         {
             this.LinearRings = new List<LinearRing> { linearRing } ?? throw new ArgumentNullException("Points");
 
@@ -434,7 +434,7 @@ namespace BAMCIS.GeoJSON
 
         public bool Contains(LineString lineString, double eps = double.MinValue * 100)
         {
-            return lineString.All(l => this.Contains(l));
+            return lineString.Points.All(l => this.Contains(l));
         }
 
         /// <summary>
@@ -450,13 +450,13 @@ namespace BAMCIS.GeoJSON
         /// <exception cref="NotImplementedException"></exception>
         public bool Contains(LineSegment lineSegment, double eps = double.MinValue * 100)
         {
-            return lineSegment.All(p => this.Contains(p, eps));
+            return lineSegment.Points.All(p => this.Contains(p, eps));
         }
 
         public bool Intersects(LineSegment lineSegment, double eps)
         {
             int pointWithin = 0;
-            foreach (Point point in lineSegment)
+            foreach (Point point in lineSegment.Points)
             {
                 if (point.Touches(this, eps))
                 {
@@ -478,7 +478,7 @@ namespace BAMCIS.GeoJSON
         public bool Intersects(LineString lineString, double eps = double.NegativeInfinity)
         {
             
-            foreach (LineSegment lineSeg in lineString)
+            foreach (LineSegment lineSeg in lineString.LineSegments)
             {
                 if (this.Intersects(lineSeg, eps))
                 {

@@ -54,7 +54,7 @@ namespace BAMCIS.GeoJSON
         {
             var points = new List<Point>(); 
         
-            foreach(var pointCoordinates in coordinates)
+            foreach(IEnumerable<Coordinate> pointCoordinates in coordinates)
             {
                 points.AddRange(pointCoordinates.Select(p => p.ToPoint()).ToList());
             }
@@ -78,9 +78,9 @@ namespace BAMCIS.GeoJSON
 
         #region Comparers
 
-        public static new Point FromJson(string json)
+        public static new MultiPoint FromJson(string json)
         {
-            return JsonConvert.DeserializeObject<Point>(json);
+            return JsonConvert.DeserializeObject<MultiPoint>(json);
         }
 
         public override bool Equals(object obj)
@@ -184,10 +184,10 @@ namespace BAMCIS.GeoJSON
                 }
             }
 
-            Point LL = new Point(new Coordinate(MinLongitude, MinLatitude));
-            Point LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
-            Point UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
-            Point UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
+            var LL = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
+            var UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
+            var UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
 
             return new Rectangle(LL, LR, UL, UR);
 
@@ -197,7 +197,6 @@ namespace BAMCIS.GeoJSON
         #endregion Topological Operations
 
 
-
-        #endregion
+        #endregion Public Methods
     }
 }

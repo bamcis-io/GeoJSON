@@ -1,8 +1,8 @@
-﻿using Extensions.ArrayExtensions;
+﻿using BAMCIS.GeoJSON.Serde;
+using Extensions.ArrayExtensions;
 using Extensions.ListExtensions;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,6 +18,7 @@ namespace BAMCIS.GeoJSON
     /// area it bounds, i.e., exterior rings are counterclockwise, and
     /// holes are clockwise.
     /// </summary>
+    [JsonConverter(typeof(LinearRingConverter))]
     public class LinearRing : LineString
     {
         
@@ -29,16 +30,20 @@ namespace BAMCIS.GeoJSON
         /// Creates a new LinearRing
         /// </summary>
         /// <param name="coordinates">The coordinates that make up the linear ring</param>
-        public LinearRing(IEnumerable<IEnumerable<Coordinate>> EnumOfEnumOfPositions): base(LineString.PositionsToLineString(EnumOfEnumOfPositions))
+        public LinearRing(IEnumerable<IEnumerable<Coordinate>> coordinates): base(coordinates)
         {
-            LineSegment[] lines = this.LineSegments.ToArray();
+            Coordinate[] coordinatesAsArray = this.Coordinates.ToArray();
 
-            if (lines.Length < 3)
+            if (coordinatesAsArray.Length < 4)
             {
-                throw new ArgumentOutOfRangeException("A linear ring requires at least 4 lineSegments.");
+                throw new ArgumentOutOfRangeException("A linear ring requires at least 4 coordinates.");
             }
 
-            if (!lines.First().P1.Equals(lines.Last().P2))
+            var c1 = coordinatesAsArray.First();
+
+            var c2 = coordinatesAsArray.Last();    
+
+            if (c1.Equals(c2))
             {
                 throw new ArgumentException("The first and last Points of the LinearRing must be equivalent.");
             }
@@ -64,7 +69,7 @@ namespace BAMCIS.GeoJSON
             }
         }
 
-        public LinearRing(List<Coordinate> coordinates) : this(LinearRing.PositionsToLineSegments(coordinates))
+        public LinearRing(IEnumerable<Coordinate> coordinates) : this(LinearRing.PositionsToLineSegments(coordinates))
         {
             this.Points = coordinates.Select(x => x.ToPoint()).ToList() ;
            
@@ -76,7 +81,7 @@ namespace BAMCIS.GeoJSON
 
         internal new bool Touches(LineString lineString, double eps)
         {
-            foreach(LineSegment lineSeg in lineString)
+            foreach(LineSegment lineSeg in lineString.LineSegments)
             {
                 if (this.Touches(lineSeg, eps))
                 {
@@ -148,7 +153,7 @@ namespace BAMCIS.GeoJSON
             return lineString.Points.All(p => this.Contains(p));
         }
 
-        public bool Within(LineString lineString)
+        public static bool Within(LineString _)
         {
             return false;
         }

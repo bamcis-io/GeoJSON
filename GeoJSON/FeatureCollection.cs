@@ -1,6 +1,7 @@
 ﻿using BAMCIS.GeoJSON.Serde;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,8 +10,8 @@ namespace BAMCIS.GeoJSON
     /// <summary>
     /// Represents a collection of feature objects
     /// </summary>
-    [JsonConverter(typeof(InheritanceBlockerConverter))]
-    public class FeatureCollection : GeoJson
+    [JsonConverter(typeof(FeatureCollectionConverter))]
+    public class FeatureCollection : GeoJson, IEnumerable<Feature>
     {
         #region Public Properties
 
@@ -40,7 +41,7 @@ namespace BAMCIS.GeoJSON
 
             this.BoundingBox = FetchBoundingBox();
 
-    }
+        }
 
         public Rectangle FetchBoundingBox()
         {
@@ -95,10 +96,15 @@ namespace BAMCIS.GeoJSON
 
         #region Public Methods
 
+        #region Conversion Methods
         public new static FeatureCollection FromJson(string json)
         {
             return JsonConvert.DeserializeObject<FeatureCollection>(json);
         }
+
+        #endregion Conversion Methods
+
+        #region Equality Operations
 
         public override bool Equals(object obj)
         {
@@ -166,6 +172,24 @@ namespace BAMCIS.GeoJSON
             return !(left == right);
         }
 
-        #endregion
+        #endregion Equality Operations
+
+        #endregion Public Methods
+
+        #region Enumerable
+        public IEnumerator<Feature> GetEnumerator()
+        {
+            foreach (Feature feat in this.Features)
+            {
+                yield return feat;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion Enumerable
     }
 }

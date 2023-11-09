@@ -55,7 +55,7 @@ namespace BAMCIS.GeoJSON
         public Rectangle(LineString lineString) : base(new LinearRing(lineString))
         {
             
-            foreach(LineSegment lineSegment in lineString)
+            foreach(LineSegment lineSegment in lineString.LineSegments)
             {
                 if (MinLongitude > lineSegment.MinLongitude)
                 {

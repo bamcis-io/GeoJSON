@@ -58,19 +58,19 @@ namespace BAMCIS.GeoJSON
         {
             if (double.IsInfinity(latitude) || double.IsNaN(latitude))
             {
-                throw new ArgumentOutOfRangeException("latitude", "The latitude cannot be NaN or infinity.");
+                throw new ArgumentOutOfRangeException(nameof(latitude), "The latitude cannot be NaN or infinity.");
             }
 
             if (double.IsInfinity(longitude) || double.IsNaN(longitude))
             {
-                throw new ArgumentOutOfRangeException("longitude", "The longitude cannot be NaN or infinity.");
+                throw new ArgumentOutOfRangeException(nameof(longitude), "The longitude cannot be NaN or infinity.");
             }
 
             if (!GeoJsonConfig.IgnoreLongitudeValidation)
             {
                 if (longitude < -180 || longitude > 180)
                 {
-                    throw new ArgumentOutOfRangeException("longitude", "Longitude must be between -180 and 180 degrees, inclusive.");
+                    throw new ArgumentOutOfRangeException(nameof(longitude), "Longitude must be between -180 and 180 degrees, inclusive.");
                 }
             }
 
@@ -78,13 +78,13 @@ namespace BAMCIS.GeoJSON
             {
                 if (latitude < -90 || latitude > 90)
                 {
-                    throw new ArgumentOutOfRangeException("latitude", "Latitude must be between -90 and 90 degrees, inclusive.");
+                    throw new ArgumentOutOfRangeException(nameof(latitude), "Latitude must be between -90 and 90 degrees, inclusive.");
                 }
             }
 
             if (double.IsInfinity(elevation))
             {
-                throw new ArgumentOutOfRangeException("elevation", "The elevation cannot be infinity.");
+                throw new ArgumentOutOfRangeException(nameof(elevation), "The elevation cannot be infinity.");
             }
 
             this.Latitude = latitude;
@@ -205,56 +205,56 @@ namespace BAMCIS.GeoJSON
 
         public static Coordinate operator -(Coordinate left, Coordinate right)
         {
-            Coordinate newPosition = new Coordinate(left.Longitude - right.Longitude, left.Latitude - right.Latitude);
+            var newPosition = new Coordinate(left.Longitude - right.Longitude, left.Latitude - right.Latitude);
 
             return newPosition;
         }
 
         public static Coordinate operator -(Coordinate left, double translation)
         {
-            Coordinate newPosition = new Coordinate(left.Longitude - translation, left.Latitude - translation);
+            var newPosition = new Coordinate(left.Longitude - translation, left.Latitude - translation);
 
             return newPosition;
         }
 
         public static Coordinate operator +(Coordinate left, Coordinate right)
         {
-            Coordinate newPosition = new Coordinate(left.Longitude + right.Longitude, left.Latitude + right.Latitude);
+            var newPosition = new Coordinate(left.Longitude + right.Longitude, left.Latitude + right.Latitude);
 
             return newPosition;
         }
 
         public static Coordinate operator +(Coordinate left, double translation)
         {
-            Coordinate newPosition = new Coordinate(left.Longitude + translation, left.Latitude + translation);
+            var newPosition = new Coordinate(left.Longitude + translation, left.Latitude + translation);
 
             return newPosition;
         }
 
         public static Coordinate operator *(Coordinate left, Coordinate right)
         {
-            Coordinate newPosition = new Coordinate(left.Longitude * right.Longitude, left.Latitude * right.Latitude);
+            var newPosition = new Coordinate(left.Longitude * right.Longitude, left.Latitude * right.Latitude);
 
             return newPosition;
         }
 
         public static Coordinate operator *(Coordinate left, double translation)
         {
-            Coordinate newPosition = new Coordinate(left.Longitude * translation, left.Latitude * translation);
+            var newPosition = new Coordinate(left.Longitude * translation, left.Latitude * translation);
 
             return newPosition;
         }
 
         public static Coordinate operator /(Coordinate left, Coordinate right)
         {
-            Coordinate newPosition = new Coordinate(left.Longitude / right.Longitude, left.Latitude / right.Latitude);
+            var newPosition = new Coordinate(left.Longitude / right.Longitude, left.Latitude / right.Latitude);
 
             return newPosition;
         }
 
         public static Coordinate operator /(Coordinate left, double translation)
         {
-            Coordinate newPosition = new Coordinate(left.Longitude / translation, left.Latitude / translation);
+            var newPosition = new Coordinate(left.Longitude / translation, left.Latitude / translation);
 
             return newPosition;
         }

@@ -2,6 +2,7 @@
 using GeoJSON.Tests.Tests;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Xunit;
 
@@ -14,13 +15,18 @@ namespace GeoJSON.Tests.Testers
         public void FeatureCollectionTest()
         {
             // ARRANGE
-            var featCollection = FetchDefaultFeaturecollection();
+            FeatureCollection featCollection = FetchDefaultFeaturecollection();
             string content = JsonConvert.SerializeObject(featCollection);
-
+            Debug.WriteLine(content);
             
             // ACT
             FeatureCollection geo = JsonConvert.DeserializeObject<FeatureCollection>(content);
             string contentDeserialized = JsonConvert.SerializeObject(geo);
+            Debug.WriteLine(contentDeserialized);
+
+            Assert.True(contentDeserialized.Equals(content));
+            
+
             FeatureCollection geoAfterDesrialization = JsonConvert.DeserializeObject<FeatureCollection>(contentDeserialized);
 
             // ASSERT

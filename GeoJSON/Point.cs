@@ -7,7 +7,7 @@ namespace BAMCIS.GeoJSON
     /// <summary>
     /// For type "Point", the "coordinates" member is a single position.
     /// </summary>
-    [JsonConverter(typeof(InheritanceBlockerConverter))]
+    [JsonConverter(typeof(PointConverter))]
     public class Point : Geometry, 
                          IAdimTopology<Point>,
                          IAdimTopology<Polygon>
@@ -17,7 +17,7 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// For type "Point", the "coordinates" member is a single position.
         /// </summary>
-        [JsonProperty(PropertyName = "Points")]
+        [JsonProperty(PropertyName = "Coordinates")]
         public Coordinate Coordinates { get; }
 
         [JsonProperty(PropertyName = "BoundingBox")]
@@ -283,7 +283,7 @@ namespace BAMCIS.GeoJSON
 
         #region Intersection Rules
 
-        public bool Intersects(Geometry geom)
+        public static bool Intersects(Geometry _)
         {
             return false;
         }
@@ -293,7 +293,7 @@ namespace BAMCIS.GeoJSON
 
         #region Contain Rules
 
-        public bool Contains(Geometry geom)
+        public static bool Contains(Geometry _)
         {
             return false;
         }

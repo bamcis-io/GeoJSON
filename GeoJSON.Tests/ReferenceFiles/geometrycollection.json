@@ -1,1 +1,1 @@
-{"geometries":[[],[]],"type":"GeometryCollection"}
+{"geometries":[{"type":"LineString","coordinates":[[0.0,0.0],[0.0,1.0]]},{"type":"LineString","coordinates":[[1.0,0.0],[1.0,1.0]]}],"type":"GeometryCollection"}
