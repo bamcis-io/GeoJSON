@@ -22,7 +22,7 @@ namespace BAMCIS.GeoJSON
 
         [JsonProperty(PropertyName = "BoundingBox")]
         [JsonIgnore]
-        public override Rectangle BoundingBox { get { return FetchBoundingBox(); } }
+        public override Rectangle BoundingBox { get { return null; } }
         #endregion
 
         #region Constructors
@@ -258,13 +258,7 @@ namespace BAMCIS.GeoJSON
         /// <returns></returns>
         public Rectangle FetchBoundingBox()
         {
-            var lon = this.GetLongitude();
-            var lat = this.GetLatitude();
-            return new Rectangle(new Point(lon, lat), 
-                                 new Point(lon, lat), 
-                                 new Point(lon, lat), 
-                                 new Point(lon, lat)
-                                 );
+            return null;
         }
 
         public Point Copy()

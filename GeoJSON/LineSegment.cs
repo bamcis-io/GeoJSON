@@ -84,7 +84,18 @@ namespace BAMCIS.GeoJSON
         }
 
         [JsonProperty(PropertyName = "BoundingBox")]
-        public override Rectangle BoundingBox { get { return FetchBoundingBox(); } }
+        public override Rectangle BoundingBox
+        {
+            get
+            {
+
+                if (this._BoundingBox == null)
+                {
+                    this._BoundingBox = FetchBoundingBox();
+                }
+                return this._BoundingBox;
+            }
+        }
 
         /// <summary>
         /// Angle in radians of this lineSegment
@@ -420,11 +431,30 @@ namespace BAMCIS.GeoJSON
         /// <returns></returns>
         public bool IsAligned([NotNull] Point p3, double eps = double.MinValue * 100)
         {
+            if (eps == double.NegativeInfinity)
+            {
+                eps = double.MinValue * 100;
+            }
+        
             double p1p3 = this.P1.ToArray().Angle(p3.ToArray());
 
             double p1p2 = this.P1.ToArray().Angle(this.P2.ToArray());
 
-            return Math.Abs(p1p3 - p1p2) < eps;
+            double k = Math.Abs(p1p3 - p1p2);
+
+            if (k == 0)
+            {
+                return true;
+            }
+            else if (k <= eps)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
 
@@ -450,7 +480,7 @@ namespace BAMCIS.GeoJSON
                 if (point.GetLatitude() < this.MinLatitude ||
                     point.GetLatitude() > this.MaxLatitude ||
                     point.GetLongitude() < this.MinLongitude ||
-                    point.GetLongitude() < this.MaxLongitude)
+                    point.GetLongitude() > this.MaxLongitude)
                     {
                         return false;
                     }

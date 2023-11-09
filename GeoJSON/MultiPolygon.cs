@@ -23,7 +23,18 @@ namespace BAMCIS.GeoJSON
 
         [JsonProperty(PropertyName = "BoundingBox")]
         [JsonIgnore]
-        public override Rectangle BoundingBox { get { return FetchBoundingBox(); } }
+        public override Rectangle BoundingBox
+        {
+            get
+            {
+
+                if (this._BoundingBox == null)
+                {
+                    this._BoundingBox = FetchBoundingBox();
+                }
+                return this._BoundingBox;
+            }
+        }
 
         #endregion
 

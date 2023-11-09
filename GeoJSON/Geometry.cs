@@ -26,6 +26,8 @@ namespace BAMCIS.GeoJSON
         [JsonIgnore]
         public abstract Rectangle BoundingBox { get; }
 
+        [JsonIgnore]
+        internal Rectangle _BoundingBox { get; set; }
 
         #endregion
 

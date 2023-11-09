@@ -51,7 +51,16 @@ namespace BAMCIS.GeoJSON
 
         [JsonProperty(PropertyName = "BoundingBox")]
         [JsonIgnore]
-        public override Rectangle BoundingBox { get{ return FetchBoundingBox(); } }
+        public override Rectangle BoundingBox { 
+            get {
+
+                    if (this._BoundingBox == null)
+                    {
+                        this._BoundingBox = FetchBoundingBox(this.Points);
+                    }
+                    return this._BoundingBox; 
+                }
+        }
 
         #endregion
 
@@ -242,7 +251,7 @@ namespace BAMCIS.GeoJSON
 
         #region Topological Operations
 
-        public Rectangle FetchBoundingBox()
+        public static Rectangle FetchBoundingBox(IEnumerable<Point> points)
         {
             double MinLongitude = double.MaxValue;
 
@@ -255,36 +264,36 @@ namespace BAMCIS.GeoJSON
             double MaxLatitude = double.MinValue;
 
 
-            foreach (LineSegment line in this.LineSegments)
+            foreach (var point in points)
             {
-                if (MinLongitude > line.BoundingBox.MinLongitude)
+                if (MinLongitude > point.GetLongitude())
                 {
-                    MinLongitude = line.BoundingBox.MinLongitude;
+                    MinLongitude = point.GetLongitude();
                 }
 
-                if (MaxLongitude < line.BoundingBox.MaxLongitude)
+                if (MaxLongitude < point.GetLongitude())
                 {
-                    MaxLongitude = line.BoundingBox.MaxLongitude;
+                    MaxLongitude = point.GetLongitude();
                 }
 
-                if (MinLatitude > line.BoundingBox.MinLatitude)
+                if (MinLatitude > point.GetLatitude())
                 {
-                    MinLatitude = line.BoundingBox.MinLatitude;
+                    MinLatitude = point.GetLatitude();
                 }
 
-                if (MaxLatitude < line.BoundingBox.MaxLatitude)
+                if (MaxLatitude < point.GetLatitude())
                 {
-                    MaxLatitude = line.BoundingBox.MaxLatitude;
+                    MaxLatitude = point.GetLatitude();
                 }
             }
 
             var LL = new Point(new Coordinate(MinLongitude, MinLatitude));
 
-            var LR = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
 
-            var UL = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
 
-            var UR = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
 
             return new Rectangle(LL, LR, UL, UR);
         }

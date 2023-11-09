@@ -43,59 +43,76 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         public Point UR { get; set; }
 
+
+        /// <summary>
+        /// Returns the LL, LR, UL, UR points of this bounding box
+        /// </summary>
+        [JsonProperty(PropertyName = "Points")]
+        [JsonIgnore]
+        public new IEnumerable<Point> Points
+        {
+            get
+            {
+                return new List<Point> { LL, LR, UL, UR };
+            }
+        }
+
+
         [JsonProperty(PropertyName = "BoundingBox")]
         [JsonIgnore]
-        public new Rectangle BoundingBox { get { return FetchBoundingBox(); } }
+        public override Rectangle BoundingBox
+        {
+            get
+            {
+
+                if (this._BoundingBox == null)
+                {
+                    this._BoundingBox = FetchBoundingBox();
+                }
+                return this._BoundingBox;
+            }
+        }
 
         #endregion Properties
 
 
         #region Constructors
 
-        public Rectangle(LineString lineString) : base(new LinearRing(lineString))
+        public Rectangle(LinearRing lineRing) : base(new LinearRing(lineRing))
         {
+
             
-            foreach(LineSegment lineSegment in lineString.LineSegments)
+            foreach (var point in lineRing.Points)
             {
-                if (MinLongitude > lineSegment.MinLongitude)
+                if (MinLongitude > point.GetLongitude())
                 {
-                    MinLongitude = lineSegment.MinLongitude;
+                    MinLongitude = point.GetLongitude();
                 }
 
-                if (MaxLongitude < lineSegment.MaxLongitude)
+                if (MaxLongitude < point.GetLongitude())
                 {
-                    MaxLongitude = lineSegment.MaxLongitude;
+                    MaxLongitude = point.GetLongitude();
                 }
 
-                if (MinLatitude > lineSegment.MinLatitude)
+                if (MinLatitude > point.GetLatitude())
                 {
-                    MinLatitude = lineSegment.MinLatitude;
+                    MinLatitude = point.GetLatitude();
                 }
 
-                if (MaxLatitude < lineSegment.MaxLatitude)
+                if (MaxLatitude < point.GetLatitude())
                 {
-                    MaxLatitude = lineSegment.MaxLatitude;
+                    MaxLatitude = point.GetLatitude();
                 }
             }
 
-            this.LL = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var LL = new Point(new Coordinate(MinLongitude, MinLatitude));
 
-            this.LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
+            var LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
 
-            this.UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
+            var UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
 
-            this.UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
-        }
+            var UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
 
-        
-        public Rectangle(Point LL, Point LR, Point UL, Point UR): this(new LineString(new List<LineSegment> { new LineSegment(UL, UR),
-                                                                                                              new LineSegment(UR, LR),
-                                                                                                              new LineSegment(LR, LL),
-                                                                                                              new LineSegment(LL, UL)
-                                                                                                            }  
-                                                                                     )  
-                                                                      )
-        {
             this.LL = LL;
 
             this.LR = LR;
@@ -103,6 +120,17 @@ namespace BAMCIS.GeoJSON
             this.UL = UL;
 
             this.UR = UR;
+
+        }
+
+        
+        public Rectangle(Point LL, Point LR, Point UL, Point UR): this(new LinearRing(new List<Coordinate> { UL.Coordinates, 
+                                                                                                             UR.Coordinates, 
+                                                                                                             LR.Coordinates, 
+                                                                                                             LL.Coordinates, 
+                                                                                                             UL.Coordinates }))
+        {
+           
         }
 
 
@@ -154,6 +182,20 @@ namespace BAMCIS.GeoJSON
             {
                 return false;
             }
+        }
+
+
+        public bool Contains(Point point)
+        {
+            if (this.MaxLatitude >= point.GetLatitude() &&
+            
+                this.MinLatitude <= point.GetLatitude() &&
+                
+                this.MaxLongitude >= point.GetLongitude() && 
+                
+                this.MinLongitude <= point.GetLongitude() ) { return true; }
+
+            return false;
         }
 
         #endregion Topographic Operations

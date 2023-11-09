@@ -36,9 +36,9 @@ namespace BAMCIS.GeoJSON
         {
             LineSegment[] lines = lineSegments.ToArray();
 
-            if (lines.Length < 4)
+            if (lines.Length < 3)
             {
-                throw new ArgumentOutOfRangeException("A linear ring requires at least 4 lineSegments.");
+                throw new ArgumentOutOfRangeException("A linear ring requires at least 3 lineSegments (or 4 points).");
             }
 
             if (!lines.First().P1.Equals(lines.Last().P2))
@@ -90,6 +90,11 @@ namespace BAMCIS.GeoJSON
 
         public bool Contains(Point point)
         {
+            if (!this.BoundingBox.Contains(point))
+            {
+                return false;
+            }
+
             var points = this.Points.ToList();
 
             int signIsAlwaysEquals = 0;

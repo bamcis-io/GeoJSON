@@ -58,7 +58,18 @@ namespace BAMCIS.GeoJSON
 
         [JsonProperty(PropertyName = "BoundingBox")]
         [JsonIgnore]
-        public override Rectangle BoundingBox { get { return FetchBoundingBox(); } }
+        public override Rectangle BoundingBox
+        {
+            get
+            {
+
+                if (this._BoundingBox == null)
+                {
+                    this._BoundingBox = FetchBoundingBox();
+                }
+                return this._BoundingBox;
+            }
+        }
 
         #endregion
 
@@ -291,11 +302,11 @@ namespace BAMCIS.GeoJSON
 
             var LL = new Point(new Coordinate(MinLongitude, MinLatitude));
 
-            var LR = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
 
-            var UL = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
 
-            var UR = new Point(new Coordinate(MinLongitude, MinLatitude));
+            var UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
 
             return new Rectangle(LL, LR, UL, UR);
 
@@ -319,6 +330,11 @@ namespace BAMCIS.GeoJSON
 
         public bool Contains(Point point, double eps = double.MinValue * 100)
         {
+
+            if (!this.BoundingBox.Contains(point))
+            {
+                return false;
+            }
 
             int numberOfRingsThatContainPoint = 0;
             bool firstRingContainsPoint = false;
@@ -356,63 +372,22 @@ namespace BAMCIS.GeoJSON
 
         public bool Intersects(Point point)
         {
-            var PolygonPoints = FetchEdge().ToList();
-
-            int signIsAlwaysEquals = 0;
-
-            for (int i = 1; i < PolygonPoints.Count; i++)
-            {
-                var Vii = PolygonPoints[i];
-
-                var Vi = PolygonPoints[i - 1];
-
-                var Vii_Vi = Vii - Vi;
-
-                var PVI = ( point - Vi );
-
-
-                var CrossProd = Vii_Vi.ToArray().CrossProduct2D(PVI.ToArray());
-
-                if (CrossProd > 0)
-                {
-                    if (signIsAlwaysEquals < 0)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        signIsAlwaysEquals = -1;
-                    }
-                }
-                else if (CrossProd == 0)
-                {
-                    continue;
-                }
-                else
-                {
-                    if (signIsAlwaysEquals > 0)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        signIsAlwaysEquals = -1;
-                    }
-                }
-            }
-            return true;
+            return false;
         }
 
         public bool Touches(Point point, double eps = double.MinValue * 100)
         {
-            foreach(var line in LinearRings)
+        
+            foreach(LinearRing lineRing in LinearRings)
             {
-                if (line.Touches(point))
+                if (lineRing.Touches(point, eps))
                 {
                     return true;
                 }
                 else
-                { }
+                { 
+                    continue;
+                }
             }
             return false;
         }
