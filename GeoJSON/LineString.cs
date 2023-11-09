@@ -78,16 +78,16 @@ namespace BAMCIS.GeoJSON
             this.LineSegments = ConvertPointsToLineSegments(points.ToList()) ?? throw new ArgumentNullException("lineSegments");
         }
 
-        public LineString(IEnumerable<IEnumerable<Coordinate>> coordinates) : base(GeoJsonType.LineString, CoordinatesToPoints(coordinates).Any(x => x.HasElevation()))
+        public LineString(IEnumerable<Coordinate> coordinates) : base(GeoJsonType.LineString, CoordinatesToPoints(coordinates).Any(x => x.HasElevation()))
         {
             this.Points = CoordinatesToPoints(coordinates);
 
             this.LineSegments = ConvertPointsToLineSegments(this.Points.ToList()) ?? throw new ArgumentNullException("lineSegments");
         }
 
-        public static List<Point> CoordinatesToPoints(IEnumerable<IEnumerable<Coordinate>> positions)
+        public static List<Point> CoordinatesToPoints(IEnumerable<Coordinate> positions)
         {
-            List<Point> points = positions.SelectMany(x => x).Select(x => new Point(x)).ToList();
+            List<Point> points = positions.Select(x => new Point(x)).ToList();
 
             return points;
 

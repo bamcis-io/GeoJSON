@@ -11,7 +11,7 @@ namespace GeoJSON.Tests
         {
             // ARRANGE
             byte[] expectedBytes = HexStringToByteArray("000000000140000000000000004010000000000000");
-            Point point = new Point(new Coordinate(2.0, 4.0));
+            var point = new Point(new Coordinate(2.0, 4.0));
 
             // ACT
             byte[] bytes = WkbConverter.ToBinary(point, Endianness.BIG);
@@ -38,7 +38,7 @@ namespace GeoJSON.Tests
         public void PointTest_Conversion()
         {
             // ARRANGE
-            Point point = new Point(new Coordinate(10.0, 10.0));
+            var point = new Point(new Coordinate(10.0, 10.0));
 
             // ACT
             byte[] bytes = point.ToWkb();
@@ -52,7 +52,7 @@ namespace GeoJSON.Tests
         public void PointTest_Conversion2()
         {
             // ARRANGE
-            Point point = new Point(new Coordinate(10.0, 10.0));
+            var point = new Point(new Coordinate(10.0, 10.0));
 
             // ACT
             byte[] bytes = point.ToWkb();

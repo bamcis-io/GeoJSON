@@ -21,15 +21,13 @@ namespace GeoJSON.Tests.Testers
             point = new Point(40, 10);
             var lineString = new LineString(new List<Point> { new Point(10, 10), new Point(20, 20), new Point(10, 40) });
 
+            var coordinates = new List<Coordinate> { new Coordinate(40, 40) ,
+                                                    new Coordinate(20,45) ,
+                                                    new Coordinate(45, 30) ,
+                                                    new Coordinate(40,40)
+                                                    };
 
-            linearRing = new LinearRing(new List<List<Coordinate>>{ new List<Coordinate> { new Coordinate(40, 40) ,
-                                                                                           new Coordinate(20,45) ,
-                                                                                           new Coordinate(45, 30) ,
-                                                                                           new Coordinate(40,40)
-                                                                                         }
-
-                                                                    }
-                                           );
+            linearRing = new LinearRing(coordinates);
             polygon = new Polygon(linearRing);
             geomColl = new GeometryCollection(new List<Geometry> { point, lineString, polygon });
         }

@@ -46,26 +46,17 @@ namespace GeoJSON.Tests.Tests
             string content = File.ReadAllText("ReferenceFiles/polygonwithhole.json").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
 
             // ACT
+            
+            Polygon geo = JsonConvert.DeserializeObject<Polygon>(content);
+            geo.RemoveInteriorRings();
 
-            try
-            {
-                Polygon geo = JsonConvert.DeserializeObject<Polygon>(content);
-                geo.RemoveInteriorRings();
-
-                // ASSERT
-                Assert.Single(geo.LinearRings);
+            // ASSERT
+            Assert.Single(geo.LinearRings);
 
 
-                Assert.True(false, "Exception was not effectively captured. Here the following exception should be raised: 'ArgumentException : The first and last Points of the LinearRing must be equivalent.' ");
+            Assert.True(true);
 
-            }
-            catch (ArgumentException ex) {
-
-                if (ex.Message == "The first and last Points of the LinearRing must be equivalent.")
-                {
-                    Assert.True(true);
-                }
-            }
+            
             
         }
 

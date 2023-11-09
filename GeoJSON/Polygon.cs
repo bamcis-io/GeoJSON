@@ -407,7 +407,7 @@ namespace BAMCIS.GeoJSON
         {
             foreach(var line in LinearRings)
             {
-                if (point.Touches(point))
+                if (line.Touches(point))
                 {
                     return true;
                 }
@@ -453,7 +453,7 @@ namespace BAMCIS.GeoJSON
             return lineSegment.Points.All(p => this.Contains(p, eps));
         }
 
-        public bool Intersects(LineSegment lineSegment, double eps)
+        public bool Intersects(LineSegment lineSegment, double eps = double.MinValue * 100)
         {
             int pointWithin = 0;
             foreach (Point point in lineSegment.Points)
@@ -475,7 +475,7 @@ namespace BAMCIS.GeoJSON
             }
         }
 
-        public bool Intersects(LineString lineString, double eps = double.NegativeInfinity)
+        public bool Intersects(LineString lineString, double eps = double.MinValue * 100)
         {
             
             foreach (LineSegment lineSeg in lineString.LineSegments)

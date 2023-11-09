@@ -26,29 +26,7 @@ namespace BAMCIS.GeoJSON
 
         #region Constructors
 
-        /// <summary>
-        /// Creates a new LinearRing
-        /// </summary>
-        /// <param name="coordinates">The coordinates that make up the linear ring</param>
-        public LinearRing(IEnumerable<IEnumerable<Coordinate>> coordinates): base(coordinates)
-        {
-            Coordinate[] coordinatesAsArray = this.Coordinates.ToArray();
-
-            if (coordinatesAsArray.Length < 4)
-            {
-                throw new ArgumentOutOfRangeException("A linear ring requires at least 4 coordinates.");
-            }
-
-            var c1 = coordinatesAsArray.First();
-
-            var c2 = coordinatesAsArray.Last();    
-
-            if (c1.Equals(c2))
-            {
-                throw new ArgumentException("The first and last Points of the LinearRing must be equivalent.");
-            }
-        }
-
+        
         /// <summary>
         /// Creates a new LinearRing
         /// </summary>
@@ -69,10 +47,28 @@ namespace BAMCIS.GeoJSON
             }
         }
 
+        /// <summary>
+        /// Creates a new LinearRing
+        /// </summary>
+        /// <param name="coordinates">The coordinates that make up the linear ring</param>
         public LinearRing(IEnumerable<Coordinate> coordinates) : this(LinearRing.PositionsToLineSegments(coordinates))
         {
             this.Points = coordinates.Select(x => x.ToPoint()).ToList() ;
-           
+
+            if (Points.Count() < 4)
+            {
+                throw new ArgumentOutOfRangeException("A linear ring requires at least 4 coordinates.");
+            }
+
+            var c1 = this.Points.First();
+
+            var c2 = this.Points.Last();
+
+            if (!c1.Equals(c2))
+            {
+                throw new ArgumentException("The first and last Points of the LinearRing must be equivalent.");
+            }
+
         }
 
         #endregion Constructors
