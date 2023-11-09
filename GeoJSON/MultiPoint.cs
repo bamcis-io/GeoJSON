@@ -174,24 +174,24 @@ namespace BAMCIS.GeoJSON
 
             foreach (Point geometry in this.Points)
             {
-                if (MaxLatitude < geometry.BoundingBox.MaxLatitude)
+                if (MaxLatitude < geometry.GetLatitude())
                 {
-                    MaxLatitude = geometry.BoundingBox.MaxLatitude;
+                    MaxLatitude = geometry.GetLatitude();
                 }
 
-                if (MaxLongitude < geometry.BoundingBox.MaxLongitude)
+                if (MaxLongitude < geometry.GetLongitude())
                 {
-                    MaxLongitude = geometry.BoundingBox.MaxLongitude;
+                    MaxLongitude = geometry.GetLongitude();
                 }
 
-                if (MinLatitude > geometry.BoundingBox.MinLatitude)
+                if (MinLatitude > geometry.GetLatitude())
                 {
-                    MinLatitude = geometry.BoundingBox.MinLatitude;
+                    MinLatitude = geometry.GetLatitude();
                 }
 
-                if (MinLongitude > geometry.BoundingBox.MinLongitude)
+                if (MinLongitude > geometry.GetLongitude())
                 {
-                    MinLongitude = geometry.BoundingBox.MinLongitude;
+                    MinLongitude = geometry.GetLongitude();
                 }
             }
 

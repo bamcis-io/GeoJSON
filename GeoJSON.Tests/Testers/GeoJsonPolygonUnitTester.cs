@@ -161,7 +161,7 @@ namespace GeoJSON.Tests.Testers
 
 
             // ASSERT
-            Assert.True(polygon.Intersects(point));
+            Assert.False(polygon.Intersects(point));
 
         }
 
@@ -203,7 +203,35 @@ namespace GeoJSON.Tests.Testers
 
             // ASSERT
             Assert.True(polygon.Intersects(lineSegment));
+            Assert.False(polygon.Contains(lineSegment));
 
+        }
+
+
+        [Fact]
+        public void IntersectsLineString()
+        {
+
+            // ARRANGE
+
+            var polygon = FetchDefaultRectangle();
+
+            var p1 = new Point(1, 1);
+
+            var p2 = new Point(2, 5);
+
+            var p3 = new Point(5, 5);
+
+            var lineSegment = new LineSegment(p1, p2);
+
+            var lineSegment2 = new LineSegment(p2, p3);
+
+            var lineString = new LineString(new List<LineSegment> {lineSegment,lineSegment2 });
+
+
+            // ASSERT
+            Assert.True(polygon.Intersects(lineString));
+            Assert.False(polygon.Contains(lineString));
         }
 
         #endregion Test Methods
