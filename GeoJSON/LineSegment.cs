@@ -435,12 +435,10 @@ namespace BAMCIS.GeoJSON
             {
                 eps = double.MinValue * 100;
             }
-        
-            double p1p3 = this.P1.ToArray().Angle(p3.ToArray());
 
-            double p1p2 = this.P1.ToArray().Angle(this.P2.ToArray());
+            var p1p3LineSeg = new LineSegment(this.P1, p3);
 
-            double k = Math.Abs(p1p3 - p1p2);
+            double k = Math.Abs(this.Angle - p1p3LineSeg.Angle);
 
             if (k == 0)
             {
@@ -454,10 +452,7 @@ namespace BAMCIS.GeoJSON
             {
                 return false;
             }
-
         }
-
-
 
         public bool Intersects(Point other, double eps = double.MinValue * 100)
         {

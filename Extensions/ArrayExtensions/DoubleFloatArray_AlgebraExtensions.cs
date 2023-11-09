@@ -25,6 +25,32 @@ namespace Extensions.ArrayExtensions
 
         }
 
+        public static double[] Sum(this double[] array, double[] other)
+        {
+            double[] result = new double[array.Length];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                result[i] = array[i] + other[i];
+            }
+
+            return result;
+
+        }
+
+        public static double[] Subtract(this double[] array, double[] other)
+        {
+            double[] result = new double[array.Length];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                result[i] = array[i] - other[i];
+            }
+
+            return result;
+
+        }
+
         public static double Mean(this double[] array)
         {
             return array.Sum() / array.Count();
