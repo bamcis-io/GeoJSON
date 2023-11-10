@@ -338,7 +338,6 @@ namespace BAMCIS.GeoJSON
 
             int numberOfRingsThatContainPoint = 0;
             bool firstRingContainsPoint = false;
-            bool otherRingsContainPoint = false;
 
             int ringCounter = 0;
             foreach (var ring in LinearRings)
@@ -349,8 +348,11 @@ namespace BAMCIS.GeoJSON
                     {
                         firstRingContainsPoint = true;
                     }
-                    else{
-                        otherRingsContainPoint = true;
+                    else
+                    {
+                        // No inner ring can contain point. Only the first ring (i.e., the outer ring) can contain a point
+                        // for a polygon to be considered as containing that point.
+                        return false;
                     }
 
                     numberOfRingsThatContainPoint++;
@@ -359,7 +361,7 @@ namespace BAMCIS.GeoJSON
                 ringCounter++;
             }
 
-            if (firstRingContainsPoint && !otherRingsContainPoint)
+            if (firstRingContainsPoint)
             {
                 return true;
             }

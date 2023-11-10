@@ -158,12 +158,21 @@ namespace BAMCIS.GeoJSON
                 bool temp = (this.Latitude == other.Latitude &&
                              this.Longitude == other.Longitude);
 
-                if (!double.IsNaN(this.Elevation) || !double.IsNaN(other.Elevation))
+                if (double.IsNaN(this.Elevation) && double.IsNaN(other.Elevation))
                 {
-                    temp = temp && (this.Elevation == other.Elevation);
+                    return temp;
+                }
+                else if (!double.IsNaN(this.Elevation) && !double.IsNaN(other.Elevation))
+                {
+                    temp = temp && ( this.Elevation == other.Elevation );
+
+                    return temp;
                 }
 
-                return temp;
+                else // (!double.IsNaN(this.Elevation) || !double.IsNaN(other.Elevation))
+                {
+                    return false;
+                }
             }
         }
 

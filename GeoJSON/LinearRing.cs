@@ -95,7 +95,115 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            var points = this.Points.ToList();
+            return LinearRing_Point_Within_LinearRing_TopologicalOperations.RayCastingAlgorithm(this, point);
+        }
+
+        
+        public bool Contains(LineSegment lineSegment)
+        {
+            return lineSegment.All(p => this.Contains(p));
+        }
+
+        public bool Contains(LineString lineString)
+        {
+            return lineString.Points.All(p => this.Contains(p));
+        }
+
+        public static bool Within(LineString _)
+        {
+            return false;
+        }
+
+        public bool Within(LinearRing lineRing)
+        {
+            return this.Points.All(p => lineRing.Contains(p));
+        }
+
+        public new bool Within(Polygon polygon)
+        {
+            return polygon.Contains(this);
+        }
+
+        public bool Contains(Polygon polygon)
+        {
+            return this.Contains(polygon.LinearRings.First());
+        }
+
+        #endregion Topological Operations
+
+
+
+        #region Public Methods
+
+        public int CountPointsthatComposeThisLineRing()
+        {
+            int points = 0;
+
+            foreach(LineSegment line in LineSegments) {
+
+                // Each linesegment is composed of solely 2 points:
+
+                points += 2;
+            }
+
+            return points;
+        }
+
+        public static LineString CoordinatesToLineString(IEnumerable<Coordinate> coordinates)
+        {
+            List<LineSegment> lineSegments = PositionsToLineSegments(coordinates);
+
+            return new LineString(lineSegments);
+        }
+
+        public static List<LineSegment> PositionsToLineSegments(IEnumerable<Coordinate> coordinates)
+        {
+            var positions = coordinates.ToList();
+            var lineSegments = new List<LineSegment> { };
+
+            var position_init = positions.Pop();
+
+            Coordinate prior_position = position_init.Copy();
+
+            Coordinate after_position;
+
+            var NPositions = positions.Count;
+
+            for (var i = 0; i < NPositions; i++)
+            {
+
+                after_position = positions.Pop();
+
+                var lineSegment = new LineSegment(new Point(prior_position),
+                                                  new Point(after_position)
+                                                  );
+
+                lineSegments.Add(lineSegment);
+
+                prior_position = after_position;
+
+            }
+
+            var closingLineSegment = new LineSegment(new Point(prior_position),
+                                              new Point(position_init)
+                                             );
+
+            lineSegments.Add(closingLineSegment);
+
+            return lineSegments;
+        }
+
+        #endregion Public Methods
+
+
+    }
+
+    internal class LinearRing_Point_Within_LinearRing_TopologicalOperations
+    {
+
+        public static bool CrossVectorProductAlgorithm(LinearRing lineRing, Point point)
+        {
+            var points = lineRing.Points.ToList();
 
             int signIsAlwaysEquals = 0;
 
@@ -143,103 +251,37 @@ namespace BAMCIS.GeoJSON
             return true;
         }
 
-
-        public bool Contains(LineSegment lineSegment)
+        public static bool RayCastingAlgorithm(LinearRing lineRing, Point point)
         {
-            return lineSegment.All(p => this.Contains(p));
-        }
+            int lineSegmentsThatAreIntersectedByPoint = 0;
+            var ypoint = point.GetLatitude();
+            var xpoint = point.GetLongitude();
 
-        public bool Contains(LineString lineString)
-        {
-            return lineString.Points.All(p => this.Contains(p));
-        }
-
-        public static bool Within(LineString _)
-        {
-            return false;
-        }
-
-        public bool Within(LinearRing lineRing)
-        {
-            return this.Points.All(p => lineRing.Contains(p));
-        }
-
-        public new bool Within(Polygon polygon)
-        {
-            return polygon.Contains(this);
-        }
-
-        public bool Contains(Polygon polygon)
-        {
-            return this.Contains(polygon.LinearRings.First());
-        }
-
-        #endregion Topographic Operations
-
-
-
-        #region Public Methods
-
-        public int CountPointsthatComposeThisLineRing()
-        {
-            int points = 0;
-
-            foreach(LineSegment line in LineSegments) {
-
-                // Each linesegment is composed of solely 2 points:
-
-                points += 2;
-            }
-
-            return points;
-        }
-
-        public static LineString CoordinatesToLineString(IEnumerable<Coordinate> coordinates)
-        {
-            List<LineSegment> lineSegments = PositionsToLineSegments(coordinates);
-
-            return new LineString(lineSegments);
-        }
-
-        public static List<LineSegment> PositionsToLineSegments(IEnumerable<Coordinate> _positions)
-        {
-            var positions = _positions.ToList();
-            var lineSegments = new List<LineSegment> { };
-
-            var position_init = positions.Pop();
-
-            Coordinate prior_position = position_init.Copy();
-
-            Coordinate after_position;
-
-            var NPositions = positions.Count;
-
-            for (var i = 0; i < NPositions; i++)
+            foreach (LineSegment lineSeg in lineRing.LineSegments)
             {
+                var p1 = lineSeg.P1;
+                var x1 = p1.GetLongitude();
+                var y1 = p1.GetLatitude();
 
-                after_position = positions.Pop();
+                var p2 = lineSeg.P2;
+                var x2 = p2.GetLongitude();
+                var y2 = p2.GetLatitude();
 
-                var lineSegment = new LineSegment(new Point(prior_position),
-                                                  new Point(after_position)
-                                                  );
+                var xLimit = x1 + ( ( ypoint - y1 ) * ( x2 - x1 ) / ( y2 - y1 ) );
 
-                lineSegments.Add(lineSegment);
-
-                prior_position = after_position;
-
+                // for the casting ray (to the right from the provided point) to be capable of 
+                // intersecting the line segment, the xpoint must be to the left of the linesegment.
+                if (xpoint < xLimit &&
+                    ypoint > lineSeg.BoundingBox.MinLatitude &&
+                    ypoint < lineSeg.BoundingBox.MaxLatitude &&
+                    !lineRing.Points.Any(p => p.Equals(point))
+                    )
+                {
+                    lineSegmentsThatAreIntersectedByPoint++;
+                }
             }
 
-            var closingLineSegment = new LineSegment(new Point(prior_position),
-                                              new Point(position_init)
-                                             );
-
-            lineSegments.Add(closingLineSegment);
-
-            return lineSegments;
+            return lineSegmentsThatAreIntersectedByPoint % 2 == 1;
         }
-
-        #endregion Public Methods
-
-
     }
 }
