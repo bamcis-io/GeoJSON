@@ -95,6 +95,12 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
+            // To be considered within, no point can be an edge of the linearRing.
+            if (this.Points.Any(p => p.Equals(point)))
+            {
+                return false;
+            }
+
             return LinearRing_Point_Within_LinearRing_TopologicalOperations.RayCastingAlgorithm(this, point);
         }
 
@@ -273,8 +279,7 @@ namespace BAMCIS.GeoJSON
                 // intersecting the line segment, the xpoint must be to the left of the linesegment.
                 if (xpoint < xLimit &&
                     ypoint > lineSeg.BoundingBox.MinLatitude &&
-                    ypoint < lineSeg.BoundingBox.MaxLatitude &&
-                    !lineRing.Points.Any(p => p.Equals(point))
+                    ypoint < lineSeg.BoundingBox.MaxLatitude
                     )
                 {
                     lineSegmentsThatAreIntersectedByPoint++;
