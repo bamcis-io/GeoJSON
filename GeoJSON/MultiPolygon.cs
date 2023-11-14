@@ -18,8 +18,23 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// The coordinates are an array of polygons.
         /// </summary>
-        [JsonProperty(PropertyName = "coordinates")]
-        public IEnumerable<Polygon> Coordinates { get; }
+        [JsonProperty(PropertyName = "Polygons")]
+        public IEnumerable<Polygon> Polygons { get; }
+
+        [JsonProperty(PropertyName = "BoundingBox")]
+        [JsonIgnore]
+        public override Rectangle BoundingBox
+        {
+            get
+            {
+
+                if (this._BoundingBox == null)
+                {
+                    this._BoundingBox = FetchBoundingBox();
+                }
+                return this._BoundingBox;
+            }
+        }
 
         #endregion
 
@@ -28,21 +43,68 @@ namespace BAMCIS.GeoJSON
         /// <summary>
         /// Creates a new MultiPolygon
         /// </summary>
-        /// <param name="coordinates">The coordinates that make up the multi polygon</param>
+        /// <param name="Polygons">The coordinates that make up the multi polygon</param>
         [JsonConstructor]
-        public MultiPolygon(IEnumerable<Polygon> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.MultiPolygon, coordinates.Any(x => x.IsThreeDimensional()), boundingBox)
+        public MultiPolygon(IEnumerable<Polygon> Polygons) : base(GeoJsonType.MultiPolygon, Polygons.Any(x => x.IsThreeDimensional()))
         {
-            this.Coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
+            this.Polygons = Polygons ?? throw new ArgumentNullException(nameof(Polygons));
 
-            if (!this.Coordinates.Any())
+            if (!this.Polygons.Any())
             {
-                throw new ArgumentOutOfRangeException("coordinates", "A MultiPolygon must have at least 1 polygon.");
+                throw new ArgumentOutOfRangeException(nameof(Polygons), "A MultiPolygon must have at least 1 polygon.");
             }
+
         }
 
         #endregion
 
         #region Public Methods
+
+        public Rectangle FetchBoundingBox()
+        {
+            
+            double MaxLatitude = double.MinValue ;
+            double MaxLongitude = double.MinValue;
+            double MinLatitude = double.MaxValue;
+            double MinLongitude = double.MaxValue;
+            
+            foreach (var polygon in this.Polygons)
+            {
+                if (MaxLatitude < polygon.BoundingBox.MaxLatitude)
+                {
+                    MaxLatitude = polygon.BoundingBox.MaxLatitude;
+                }
+
+                if (MaxLongitude < polygon.BoundingBox.MaxLongitude)
+                {
+                    MaxLongitude = polygon.BoundingBox.MaxLongitude;
+                }
+
+                if (MinLatitude > polygon.BoundingBox.MinLatitude)
+                {
+                    MinLatitude = polygon.BoundingBox.MinLatitude;
+                }
+
+                if (MinLongitude > polygon.BoundingBox.MinLongitude)
+                {
+                    MinLongitude = polygon.BoundingBox.MinLongitude;
+                }
+            }
+
+            Point LL = new Point(new Coordinate(MinLongitude, MinLatitude));
+            Point LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
+            Point UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
+            Point UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
+
+            return new Rectangle(LL, LR, UL, UR);
+
+        }
+
+        /// <summary>
+        /// Deserializes the json into a MultiPolygon
+        /// </summary>
+        /// <param name="json">The json to deserialize</param>
+        /// <returns>A Point object</returns>
         public static new MultiPolygon FromJson(string json)
         {
             return JsonConvert.DeserializeObject<MultiPolygon>(json);
@@ -76,13 +138,13 @@ namespace BAMCIS.GeoJSON
 
             bool coordinatesEqual = true;
 
-            if (this.Coordinates != null && other.Coordinates != null)
+            if (this.Polygons != null && other.Polygons != null)
             {
-                coordinatesEqual = this.Coordinates.SequenceEqual(other.Coordinates);
+                coordinatesEqual = this.Polygons.SequenceEqual(other.Polygons);
             }
             else
             {
-                coordinatesEqual = (this.Coordinates == null && other.Coordinates == null);
+                coordinatesEqual = (this.Polygons == null && other.Polygons == null);
             }
 
             return this.Type == other.Type &&
@@ -92,8 +154,9 @@ namespace BAMCIS.GeoJSON
 
         public override int GetHashCode()
         {
-            return Hashing.Hash(this.Type, this.Coordinates, this.BoundingBox);
+            return Hashing.Hash(this.Type, this.Polygons, this.BoundingBox);
         }
+
 
         public static bool operator ==(MultiPolygon left, MultiPolygon right)
         {

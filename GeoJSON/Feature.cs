@@ -33,6 +33,7 @@ namespace BAMCIS.GeoJSON
         [JsonProperty(PropertyName = "id", NullValueHandling = NullValueHandling.Ignore)]
         public FeatureId Id { get; }
 
+
         #endregion
 
         #region Constructors
@@ -43,11 +44,12 @@ namespace BAMCIS.GeoJSON
         /// <param name="geometry">The geometry to create the feature from</param>
         /// <param name="properties">The feature properties</param>
         [JsonConstructor]
-        public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null, IEnumerable<double> boundingBox = null, FeatureId id = null) : base(GeoJsonType.Feature, geometry == null ? false : geometry.IsThreeDimensional(), boundingBox)
+        public Feature(Geometry geometry, IDictionary<string, dynamic> properties = null, FeatureId id = null) : base(GeoJsonType.Feature, geometry != null && geometry.IsThreeDimensional())
         {
             this.Geometry = geometry; // Geometry can be null
             this.Properties = properties ?? new Dictionary<string, dynamic>();
             this.Id = id; // id can be null
+
         }
 
         #endregion
@@ -87,13 +89,13 @@ namespace BAMCIS.GeoJSON
 
             bool bBoxEqual = true;
 
-            if (this.BoundingBox != null && other.BoundingBox != null)
+            if (this?.Geometry?.BoundingBox != null && other?.Geometry?.BoundingBox != null)
             {
-                bBoxEqual = this.BoundingBox.SequenceEqual(other.BoundingBox);
+                bBoxEqual = this.Geometry.BoundingBox.SequenceEqual(other.Geometry.BoundingBox);
             }
             else
             {
-                bBoxEqual = (this.BoundingBox == null && other.BoundingBox == null);
+                bBoxEqual = (this?.Geometry?.BoundingBox == null && other?.Geometry?.BoundingBox == null);
             }
 
             bool propertiesEqual = true;
@@ -109,14 +111,14 @@ namespace BAMCIS.GeoJSON
 
 
             return this.Type == other.Type &&
-                this.Geometry == other.Geometry &&
+                this?.Geometry == other?.Geometry &&
                 bBoxEqual &&
                 propertiesEqual;
         }
 
         public override int GetHashCode()
         {
-            return Hashing.Hash(this.Type, this.Geometry, this.BoundingBox, this.Properties);
+            return Hashing.Hash(this.Type, this.Geometry, this.Geometry.BoundingBox, this.Properties);
         }
 
         public static bool operator ==(Feature left, Feature right)

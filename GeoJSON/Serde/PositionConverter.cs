@@ -22,7 +22,7 @@ namespace BAMCIS.GeoJSON.Serde
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(Position);
+            return objectType == typeof(Coordinate);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace BAMCIS.GeoJSON.Serde
                 elevation = token.ElementAt(2).ToObject<double>(serializer);
             }
 
-            return new Position(longitude, latitude, elevation);
+            return new Coordinate(longitude, latitude, elevation);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace BAMCIS.GeoJSON.Serde
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            Position pos = (Position)value;
+            Coordinate pos = (Coordinate)value;
 
             if (pos.HasElevation())
             {

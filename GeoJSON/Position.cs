@@ -9,7 +9,7 @@ namespace BAMCIS.GeoJSON
     /// A GeoJSON position consisting of a longitude, latitude, and optional elevation
     /// </summary>
     [JsonConverter(typeof(PositionConverter))]
-    public class Position : IEquatable<Position>, IEqualityComparer<Position>
+    public class Coordinate : IEquatable<Coordinate>, IEqualityComparer<Coordinate>
     {
         #region Public Properties
 
@@ -43,7 +43,7 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="longitude">The position's longitude</param>
         /// <param name="latitude">The position's latitude</param>
-        public Position(double longitude, double latitude) : this(longitude, latitude, double.NaN)
+        public Coordinate(double longitude, double latitude) : this(longitude, latitude, double.NaN)
         {
         }
 
@@ -54,23 +54,23 @@ namespace BAMCIS.GeoJSON
         /// <param name="latitude">The position's latitude</param>
         /// <param name="elevation">The position's elevation</param>
         [JsonConstructor]
-        public Position(double longitude, double latitude, double elevation)
+        public Coordinate(double longitude, double latitude, double elevation)
         {
             if (double.IsInfinity(latitude) || double.IsNaN(latitude))
             {
-                throw new ArgumentOutOfRangeException("latitude", "The latitude cannot be NaN or infinity.");
+                throw new ArgumentOutOfRangeException(nameof(latitude), "The latitude cannot be NaN or infinity.");
             }
 
             if (double.IsInfinity(longitude) || double.IsNaN(longitude))
             {
-                throw new ArgumentOutOfRangeException("longitude", "The longitude cannot be NaN or infinity.");
+                throw new ArgumentOutOfRangeException(nameof(longitude), "The longitude cannot be NaN or infinity.");
             }
 
             if (!GeoJsonConfig.IgnoreLongitudeValidation)
             {
                 if (longitude < -180 || longitude > 180)
                 {
-                    throw new ArgumentOutOfRangeException("longitude", "Longitude must be between -180 and 180 degrees, inclusive.");
+                    throw new ArgumentOutOfRangeException(nameof(longitude), "Longitude must be between -180 and 180 degrees, inclusive.");
                 }
             }
 
@@ -78,13 +78,13 @@ namespace BAMCIS.GeoJSON
             {
                 if (latitude < -90 || latitude > 90)
                 {
-                    throw new ArgumentOutOfRangeException("latitude", "Latitude must be between -90 and 90 degrees, inclusive.");
+                    throw new ArgumentOutOfRangeException(nameof(latitude), "Latitude must be between -90 and 90 degrees, inclusive.");
                 }
             }
 
             if (double.IsInfinity(elevation))
             {
-                throw new ArgumentOutOfRangeException("elevation", "The elevation cannot be infinity.");
+                throw new ArgumentOutOfRangeException(nameof(elevation), "The elevation cannot be infinity.");
             }
 
             this.Latitude = latitude;
@@ -96,14 +96,21 @@ namespace BAMCIS.GeoJSON
 
         #region Public Methods
 
+        public double[] ToArray()
+        {
+            double[] array = new double[]{ this.Longitude, this.Latitude};
+
+            return array;
+        }
+
         /// <summary>
         /// Deserializes the provided json into a Position object
         /// </summary>
         /// <param name="json">The json to deserialize</param>
         /// <returns>A Position object</returns>
-        public static Position FromJson(string json)
+        public static Coordinate FromJson(string json)
         {
-            return JsonConvert.DeserializeObject<Position>(json);
+            return JsonConvert.DeserializeObject<Coordinate>(json);
         }
 
         /// <summary>
@@ -127,7 +134,7 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            Position other = (Position)obj;
+            Coordinate other = (Coordinate)obj;
 
             bool temp = this.Latitude == other.Latitude &&
                this.Longitude == other.Longitude;
@@ -140,7 +147,7 @@ namespace BAMCIS.GeoJSON
             return temp;
         }
 
-        public bool Equals(Position other)
+        public bool Equals(Coordinate other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -148,19 +155,28 @@ namespace BAMCIS.GeoJSON
             }
             else
             {
-                bool temp = this.Latitude == other.Latitude &&
-                this.Longitude == other.Longitude;
+                bool temp = (this.Latitude == other.Latitude &&
+                             this.Longitude == other.Longitude);
 
-                if (!double.IsNaN(this.Elevation) || !double.IsNaN(other.Elevation))
+                if (double.IsNaN(this.Elevation) && double.IsNaN(other.Elevation))
                 {
-                    temp = temp && (this.Elevation == other.Elevation);
+                    return temp;
+                }
+                else if (!double.IsNaN(this.Elevation) && !double.IsNaN(other.Elevation))
+                {
+                    temp = temp && ( this.Elevation == other.Elevation );
+
+                    return temp;
                 }
 
-                return temp;
+                else // (!double.IsNaN(this.Elevation) || !double.IsNaN(other.Elevation))
+                {
+                    return false;
+                }
             }
         }
 
-        public bool Equals(Position left, Position right)
+        public bool Equals(Coordinate left, Coordinate right)
         {
             return left == right;
         }
@@ -175,7 +191,7 @@ namespace BAMCIS.GeoJSON
             return $"[{this.Longitude},{this.Latitude}{(!double.IsNaN(this.Elevation) ? $",{this.Elevation}" : "")}]";
         }
 
-        public static bool operator ==(Position left, Position right)
+        public static bool operator ==(Coordinate left, Coordinate right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -190,14 +206,81 @@ namespace BAMCIS.GeoJSON
             return left.Equals(right);
         }
 
-        public static bool operator !=(Position left, Position right)
+        public static bool operator !=(Coordinate left, Coordinate right)
         {
             return !(left == right);
         }
 
-        public int GetHashCode(Position other)
+
+        public static Coordinate operator -(Coordinate left, Coordinate right)
+        {
+            var newPosition = new Coordinate(left.Longitude - right.Longitude, left.Latitude - right.Latitude);
+
+            return newPosition;
+        }
+
+        public static Coordinate operator -(Coordinate left, double translation)
+        {
+            var newPosition = new Coordinate(left.Longitude - translation, left.Latitude - translation);
+
+            return newPosition;
+        }
+
+        public static Coordinate operator +(Coordinate left, Coordinate right)
+        {
+            var newPosition = new Coordinate(left.Longitude + right.Longitude, left.Latitude + right.Latitude);
+
+            return newPosition;
+        }
+
+        public static Coordinate operator +(Coordinate left, double translation)
+        {
+            var newPosition = new Coordinate(left.Longitude + translation, left.Latitude + translation);
+
+            return newPosition;
+        }
+
+        public static Coordinate operator *(Coordinate left, Coordinate right)
+        {
+            var newPosition = new Coordinate(left.Longitude * right.Longitude, left.Latitude * right.Latitude);
+
+            return newPosition;
+        }
+
+        public static Coordinate operator *(Coordinate left, double translation)
+        {
+            var newPosition = new Coordinate(left.Longitude * translation, left.Latitude * translation);
+
+            return newPosition;
+        }
+
+        public static Coordinate operator /(Coordinate left, Coordinate right)
+        {
+            var newPosition = new Coordinate(left.Longitude / right.Longitude, left.Latitude / right.Latitude);
+
+            return newPosition;
+        }
+
+        public static Coordinate operator /(Coordinate left, double translation)
+        {
+            var newPosition = new Coordinate(left.Longitude / translation, left.Latitude / translation);
+
+            return newPosition;
+        }
+
+        public int GetHashCode(Coordinate other)
         {
             return other.GetHashCode();
+        }
+
+        internal Coordinate Copy()
+        {
+            return new Coordinate(this.Longitude, this.Latitude);
+        }
+
+        internal Point ToPoint()
+        {
+            return new Point(this.Longitude, this.Latitude);
         }
 
         #endregion

@@ -38,17 +38,14 @@ namespace BAMCIS.GeoJSON.Serde
         {
             JObject token = JObject.Load(reader);
 
-            IEnumerable<IEnumerable<IEnumerable<Position>>> coordinates = token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<IEnumerable<Position>>>>(serializer);
+            var polygonsCoordinates = token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<IEnumerable<Coordinate>>>>(serializer);
 
             // Take this array of arrays of arrays and create linear rings
             // and use those to create create polygons
-            return new MultiPolygon(
-                coordinates
-                .Select(x => new Polygon(
-                    x.Select(y => new LinearRing(y))
-                    )
-                )
-            );
+
+            var polygons = polygonsCoordinates.Select(linearRings => new Polygon(linearRings.Select(linearRingCoordinates => new LinearRing(linearRingCoordinates))));
+
+            return new MultiPolygon(polygons);
         }
 
         /// <summary>
@@ -64,7 +61,7 @@ namespace BAMCIS.GeoJSON.Serde
             JToken.FromObject(new
             {
                 type = mp.Type,
-                coordinates = mp.Coordinates.Select(x => x.Coordinates.Select(y => y.Coordinates))
+                coordinates = mp.Polygons.Select(polygon => polygon.LinearRings.Select(linearRing => linearRing.Points.Select(p => p.Coordinates)))
             }).WriteTo(writer);
         }
 

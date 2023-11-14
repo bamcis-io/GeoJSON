@@ -101,7 +101,7 @@ namespace BAMCIS.GeoJSON.Wkb
                
                 return BitConverter.ToDouble(temp, 0);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 0;
             }
@@ -129,7 +129,7 @@ namespace BAMCIS.GeoJSON.Wkb
 
                 return bytesRead;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

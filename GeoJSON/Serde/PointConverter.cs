@@ -2,14 +2,15 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace BAMCIS.GeoJSON.Serde
 {
     /// <summary>
-    /// Converts a MultiLineString GeoJSON object to and from JSON
+    /// Converts a position to an array of coordinates and back
     /// </summary>
-    public class MultiLineStringConverter : JsonConverter
+    public class PointConverter : JsonConverter
     {
         #region Public Properties
 
@@ -23,11 +24,11 @@ namespace BAMCIS.GeoJSON.Serde
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(MultiLineString);
+            return objectType == typeof(PointConverter);
         }
 
         /// <summary>
-        /// This takes the array of arrays and recasts them back to line string objects
+        /// Reads an array of doubles and creates a Position object
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="objectType"></param>
@@ -38,27 +39,29 @@ namespace BAMCIS.GeoJSON.Serde
         {
             JObject token = JObject.Load(reader);
 
-            IEnumerable<IEnumerable<Coordinate>> coordinates = token.GetValue("Coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<Coordinate>>>(serializer);
+            Coordinate coordinate = token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase)
+                                    .ToObject<Coordinate>(serializer);
 
-            List<LineString> lineStrings = coordinates.Select(c => LineSegment.CoordinatesToLineString(c)).ToList();
+            var point = new Point(coordinate);
 
-            return new MultiLineString(lineStrings);
+            return point;
+
         }
 
         /// <summary>
-        /// This flattens the coordinates property into an array of arrays
+        /// Takes the position object and converts it to an array of doubles
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="value"></param>
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            MultiLineString mls = (MultiLineString)value;
+            Point point = (Point) value;
 
             JToken.FromObject(new
             {
-                type = mls.Type,
-                coordinates = mls.LineStrings.Select(x => x.Points.Select(p => p.Coordinates))
+                type = point.Type,
+                coordinates = point.Coordinates
             }).WriteTo(writer);
         }
 

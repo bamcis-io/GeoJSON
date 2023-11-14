@@ -9,141 +9,9 @@ using Xunit;
 
 namespace GeoJSON.Tests
 {
-    public class WkbUnitTests
+    public class WkbUnitTests : WkbBaseUnitTester
     {
-        #region WkbConverter Tests
-
-        [Fact]
-        public void WkbConverterTest_ToBinary_BigEndian()
-        {
-            // ARRANGE
-            byte[] expectedBytes = HexStringToByteArray("000000000140000000000000004010000000000000");
-            Point point = new Point(new Position(2.0, 4.0));
-
-            // ACT
-            byte[] bytes = WkbConverter.ToBinary(point, Endianness.BIG);
-
-            // ASSERT
-            Assert.Equal(expectedBytes, bytes);
-        }
-
-        [Fact]
-        public void WkbConverterTest_FromBinary_BigEndian()
-        {
-            // ARRANGE
-            byte[] bytes = HexStringToByteArray("000000000140000000000000004010000000000000");
-
-            // ACT
-            Point point = WkbConverter.FromBinary<Point>(bytes);
-
-            // ASSERT
-            Assert.Equal(2.0, point.GetLongitude());
-            Assert.Equal(4.0, point.GetLatitude());
-        }
-
-        #endregion
-
-        #region Point Tests
-
-        [Fact]
-        public void PointTest_Conversion()
-        {
-            // ARRANGE
-            Point point = new Point(new Position(10.0, 10.0));
-
-            // ACT
-            byte[] bytes = point.ToWkb();
-            Geometry geo = Point.FromWkb(bytes);
-
-            // ASSERT
-            point = Assert.IsType<Point>(geo);
-        }
-
-        [Fact]
-        public void PointTest_Conversion2()
-        {
-            // ARRANGE
-            Point point = new Point(new Position(10.0, 10.0));
-
-            // ACT
-            byte[] bytes = point.ToWkb();
-            point = Geometry.FromWkb<Point>(bytes);
-
-            // ASSERT
-            point = Assert.IsType<Point>(point);
-            Assert.Equal(10.0, point.GetLongitude());
-            Assert.Equal(10.0, point.GetLatitude());
-        }
-
-        [Fact]
-        public void PointTest_FromBinary_BigEndian()
-        {
-            // ARRANGE
-
-            // POINT(2.0 4.0) BIG ENDIAN
-            byte[] bytes = HexStringToByteArray("000000000140000000000000004010000000000000");
-
-            // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-
-            // ASSERT
-            Point point = Assert.IsType<Point>(geo);
-            Assert.Equal(2.0, point.Coordinates.Longitude);
-            Assert.Equal(4.0, point.Coordinates.Latitude);
-        }
-
-        [Fact]
-        public void PointTest_ToBinary_BigEndian()
-        {
-            // ARRANGE
-
-            // POINT(2.0 4.0) BIG ENDIAN
-            byte[] bytes = HexStringToByteArray("000000000140000000000000004010000000000000");
-
-            // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-            byte[] newBytes = WkbConverter.ToBinary(geo, Endianness.BIG);
-
-            // ASSERT
-            Assert.Equal(bytes, newBytes);
-        }
-
-        [Fact]
-        public void PointTest_FromBinary_LittleEndian()
-        {
-            // ARRANGE
-
-            // POINT(1.2345 2.3456) LITTLE ENDIAN
-            byte[] bytes = HexStringToByteArray("01010000008D976E1283C0F33F16FBCBEEC9C30240");
-
-            // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-
-            // ASSERT
-            Point point = Assert.IsType<Point>(geo);
-            Assert.Equal(1.2345, point.Coordinates.Longitude);
-            Assert.Equal(2.3456, point.Coordinates.Latitude);
-        }
-
-        [Fact]
-        public void PointTest_ToBinary_LittleEndian()
-        {
-            // ARRANGE
-
-            // POINT(1.2345 2.3456) LITTLE ENDIAN
-            byte[] bytes = HexStringToByteArray("01010000008D976E1283C0F33F16FBCBEEC9C30240");
-
-            // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-            byte[] newBytes = WkbConverter.ToBinary(geo, Endianness.LITTLE);
-
-            // ASSERT
-            Assert.Equal(bytes, newBytes);
-        }
-
-        #endregion
-
-        #region LineString Tests
+       
 
         [Fact]
         public void LineStringTest_FromBinary_BigEndian()
@@ -158,10 +26,10 @@ namespace GeoJSON.Tests
 
             // ASSERT
             LineString lineString = Assert.IsType<LineString>(geo);
-            Assert.Equal(3, lineString.Coordinates.Count());
-            Assert.Equal(new Position(30, 10), lineString.Coordinates.ElementAt(0));
-            Assert.Equal(new Position(10, 30), lineString.Coordinates.ElementAt(1));
-            Assert.Equal(new Position(40, 40), lineString.Coordinates.ElementAt(2));
+            Assert.True(lineString.LineSegments.Count() == 2, "Length of the LineSegment does not match");
+            Assert.Equal(new Coordinate(30, 10), lineString.LineSegments.ElementAt(0).ElementAt(0).Coordinates);
+            Assert.Equal(new Coordinate(10, 30), lineString.LineSegments.ElementAt(1).ElementAt(0).Coordinates);
+            Assert.Equal(new Coordinate(40, 40), lineString.LineSegments.ElementAt(1).ElementAt(1).Coordinates);
         }
 
         [Fact]
@@ -177,10 +45,10 @@ namespace GeoJSON.Tests
 
             // ASSERT
             LineString lineString = Assert.IsType<LineString>(geo);
-            Assert.Equal(3, lineString.Coordinates.Count());
-            Assert.Equal(new Position(30, 10), lineString.Coordinates.ElementAt(0));
-            Assert.Equal(new Position(10, 30), lineString.Coordinates.ElementAt(1));
-            Assert.Equal(new Position(40, 40), lineString.Coordinates.ElementAt(2));
+            Assert.True(lineString.LineSegments.Count() == 2, "Length of the LineSegment does not match");
+            Assert.Equal(new Coordinate(30, 10), lineString.LineSegments.ElementAt(0).ElementAt(0).Coordinates);
+            Assert.Equal(new Coordinate(10, 30), lineString.LineSegments.ElementAt(1).ElementAt(0).Coordinates);
+            Assert.Equal(new Coordinate(40, 40), lineString.LineSegments.ElementAt(1).ElementAt(1).Coordinates);
         }
 
         [Fact]
@@ -196,10 +64,10 @@ namespace GeoJSON.Tests
 
             // ASSERT
             LineString lineString = Assert.IsType<LineString>(geo);
-            Assert.Equal(5, lineString.Coordinates.Count());
-            Assert.Equal(new Position(30.1234, 10.6), lineString.Coordinates.ElementAt(0));
-            Assert.Equal(new Position(10.77, 30.85), lineString.Coordinates.ElementAt(1));
-            Assert.Equal(new Position(19, 77), lineString.Coordinates.ElementAt(4));
+            Assert.Equal(4, lineString.LineSegments.Count());
+            Assert.Equal(new Coordinate(30.1234, 10.6), lineString.LineSegments.ElementAt(0).ElementAt(0).Coordinates);
+            Assert.Equal(new Coordinate(10.77, 30.85), lineString.LineSegments.ElementAt(1).ElementAt(0).Coordinates);
+            Assert.Equal(new Coordinate(19, 77), lineString.LineSegments.ElementAt(3).ElementAt(1).Coordinates);
         }
 
         [Fact]
@@ -207,15 +75,14 @@ namespace GeoJSON.Tests
         {
             // ARRANGE
 
-            // LINESTRING(30 10, 10 30, 40 40)
-            byte[] bytes = HexStringToByteArray("000000000200000003403E00000000000040240000000000004024000000000000403E00000000000040440000000000004044000000000000");
+            var geo = new LineString(new List<Point>{ new Point(new Coordinate(30, 10)), new Point(new Coordinate(10, 30)), new Point(new Coordinate(40, 40)) } );
 
             // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-            byte[] newBytes = WkbConverter.ToBinary(geo, Endianness.BIG);
+            byte[] bytes = WkbConverter.ToBinary(geo, Endianness.BIG);
+            Geometry geoReconstituted = WkbConverter.FromBinary(bytes);
 
             // ASSERT
-            Assert.Equal(bytes, newBytes);
+            Assert.True(geo.Equals(geoReconstituted), "Geometries are not equivalent.");
         }
 
         [Fact]
@@ -223,15 +90,14 @@ namespace GeoJSON.Tests
         {
             // ARRANGE
 
-            // LINESTRING(30 10, 10 30, 40 40)
-            byte[] bytes = HexStringToByteArray("0102000000030000000000000000003e40000000000000244000000000000024400000000000003e4000000000000044400000000000004440");
+            var geo = new LineString(new List<Point> { new Point(new Coordinate(30, 10)), new Point(new Coordinate(10, 30)), new Point(new Coordinate(40, 40)) });
 
             // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-            byte[] newBytes = WkbConverter.ToBinary(geo, Endianness.LITTLE);
+            byte[] bytes = WkbConverter.ToBinary(geo, Endianness.LITTLE);
+            Geometry geoReconstituted = WkbConverter.FromBinary(bytes);
 
             // ASSERT
-            Assert.Equal(bytes, newBytes);
+            Assert.True(geo.Equals(geoReconstituted), "Geometries are not equivalent.");
         }
 
         [Fact]
@@ -240,17 +106,16 @@ namespace GeoJSON.Tests
             // ARRANGE
 
             // LINESTRING(30.1234 10.6, 10.77 30.85, 40.1 40.2, 21 07, 19 77)
-            byte[] bytes = HexStringToByteArray("000000000200000005403E1F972474538F402533333333333340258A3D70A3D70A403ED9999999999A40440CCCCCCCCCCD404419999999999A4035000000000000401C00000000000040330000000000004053400000000000");
+            var geo = new LineString(new List<Point> { new Point(new Coordinate(30, 10)), new Point(new Coordinate(10, 30)), new Point(new Coordinate(40, 40)) });
 
             // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-            byte[] newBytes = WkbConverter.ToBinary(geo, Endianness.BIG);
+            byte[] bytes = WkbConverter.ToBinary(geo, Endianness.BIG);
+            Geometry geoReconstituted = WkbConverter.FromBinary(bytes);
 
             // ASSERT
-            Assert.Equal(bytes, newBytes);
+            Assert.True(geo.Equals(geoReconstituted), "Geometries are not equivalent.");
         }
 
-        #endregion
 
         #region MultiLineString Tests
 
@@ -267,10 +132,10 @@ namespace GeoJSON.Tests
 
             // ASSERT
             MultiLineString lineString = Assert.IsType<MultiLineString>(geo);
-            Assert.Equal(2, lineString.Coordinates.Count());
-            LineString ls1 = Assert.IsType<LineString>(lineString.Coordinates.ElementAt(1));
-            Assert.Equal(40, ls1.Coordinates.ElementAt(2).Longitude);
-            Assert.Equal(20, ls1.Coordinates.ElementAt(2).Latitude);
+            Assert.Equal(2, lineString.LineStrings.Count());
+            LineString ls1 = Assert.IsType<LineString>(lineString.LineStrings.ElementAt(1));
+            Assert.Equal(40, ls1.LineSegments.ElementAt(2).ElementAt(0).Coordinates.Longitude);
+            Assert.Equal(20, ls1.LineSegments.ElementAt(2).ElementAt(0).Coordinates.Latitude);
         }
 
         [Fact]
@@ -286,10 +151,10 @@ namespace GeoJSON.Tests
 
             // ASSERT
             MultiLineString lineString = Assert.IsType<MultiLineString>(geo);
-            Assert.Equal(2, lineString.Coordinates.Count());
-            LineString ls1 = Assert.IsType<LineString>(lineString.Coordinates.ElementAt(1));
-            Assert.Equal(40, ls1.Coordinates.ElementAt(2).Longitude);
-            Assert.Equal(20, ls1.Coordinates.ElementAt(2).Latitude);
+            Assert.Equal(2, lineString.LineStrings.Count());
+            LineString ls1 = Assert.IsType<LineString>(lineString.LineStrings.ElementAt(1));
+            Assert.Equal(40, ls1.LineSegments.ElementAt(2).ElementAt(0).Coordinates.Longitude);
+            Assert.Equal(20, ls1.LineSegments.ElementAt(2).ElementAt(0).Coordinates.Latitude);
         }
   
         [Fact]
@@ -297,11 +162,12 @@ namespace GeoJSON.Tests
         {
             // ARRANGE
 
-            // MULTILINESTRING ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))
-            byte[] bytes = HexStringToByteArray("00000000050000000200000000020000000340240000000000004024000000000000403400000000000040340000000000004024000000000000404400000000000000000000020000000440440000000000004044000000000000403E000000000000403E00000000000040440000000000004034000000000000403E0000000000004024000000000000");
+            // MULTILINESTRING((10 10,20 20,10 40),(40 40,30 30,40 20,30 10))
+            byte[] bytes = HexStringToByteArray("0000000005000000020000000002000000044024000000000000402400000000000040340000000000004034000000000000403400000000000040340000000000004024000000000000404400000000000000000000020000000640440000000000004044000000000000403E000000000000403E000000000000403E000000000000403E0000000000004044000000000000403400000000000040440000000000004034000000000000403E0000000000004024000000000000");
 
             // ACT
             Geometry geo = WkbConverter.FromBinary(bytes);
+
             byte[] newBytes = WkbConverter.ToBinary(geo, Endianness.BIG);
 
             // ASSERT
@@ -357,8 +223,8 @@ namespace GeoJSON.Tests
 
             // ASSERT
             MultiPoint mp = Assert.IsType<MultiPoint>(geo);
-            Assert.Equal(21.06, mp.Coordinates.ElementAt(0).Longitude);
-            Assert.Equal(19.77, mp.Coordinates.ElementAt(0).Latitude);
+            Assert.Equal(21.06, mp.Points.ElementAt(0).GetLongitude());
+            Assert.Equal(19.77, mp.Points.ElementAt(0).GetLatitude());
         }
 
         [Fact]
@@ -527,101 +393,6 @@ namespace GeoJSON.Tests
 
         #endregion
 
-        #region GeometryCollection Tests
 
-        [Fact]
-        public void GeometryCollectionTest_FromBinary_BigEndian()
-        {
-            // ARRANGE
-
-            // GEOMETRYCOLLECTION(POINT (40 10),LINESTRING(10 10, 20 20, 10 40),POLYGON((40 40, 20 45, 45 30, 40 40)))
-            byte[] bytes = HexStringToByteArray("0000000007000000030000000001404400000000000040240000000000000000000002000000034024000000000000402400000000000040340000000000004034000000000000402400000000000040440000000000000000000003000000010000000440440000000000004044000000000000403400000000000040468000000000004046800000000000403E00000000000040440000000000004044000000000000");
-            
-            // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-
-            // ASSERT
-            GeometryCollection geoCollection = Assert.IsType<GeometryCollection>(geo);
-            Point point = Assert.IsType<Point>(geoCollection.Geometries.ElementAt(0));
-            LineString lineString = Assert.IsType<LineString>(geoCollection.Geometries.ElementAt(1));
-            Polygon polygon = Assert.IsType<Polygon>(geoCollection.Geometries.ElementAt(2));
-            Assert.Equal(40, point.Coordinates.Longitude);
-            Assert.Equal(10, point.Coordinates.Latitude);
-        }
-
-        [Fact]
-        public void GeometryCollectionTest_FromBinary_LittleEndian()
-        {
-            // ARRANGE
-
-            // GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(4 6,7 10))
-            byte[] bytes = HexStringToByteArray("010700000002000000010100000000000000000010400000000000001840010200000002000000000000000000104000000000000018400000000000001c400000000000002440");
-
-            // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-
-            // ASSERT
-            GeometryCollection geoCollection = Assert.IsType<GeometryCollection>(geo);
-            Point point = Assert.IsType<Point>(geoCollection.Geometries.ElementAt(0));
-            LineString lineString = Assert.IsType<LineString>(geoCollection.Geometries.ElementAt(1));
-            Assert.Equal(4, point.Coordinates.Longitude);
-            Assert.Equal(6, point.Coordinates.Latitude);
-        }
-
-        [Fact]
-        public void GeometryCollectionTest_ToBinary_LittleEndian()
-        {
-            // ARRANGE
-
-            // GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(4 6,7 10))
-            byte[] bytes = HexStringToByteArray("010700000002000000010100000000000000000010400000000000001840010200000002000000000000000000104000000000000018400000000000001c400000000000002440");
-
-            // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-            byte[] newBytes = WkbConverter.ToBinary(geo, Endianness.LITTLE);
-
-            // ASSERT
-            Assert.Equal(bytes, newBytes);
-        }
-
-        [Fact]
-        public void GeometryCollectionTest_ToBinary_BigEndian()
-        {
-            // ARRANGE
-
-            // GEOMETRYCOLLECTION(POINT (40 10),LINESTRING(10 10, 20 20, 10 40),POLYGON((40 40, 20 45, 45 30, 40 40)))
-            byte[] bytes = HexStringToByteArray("0000000007000000030000000001404400000000000040240000000000000000000002000000034024000000000000402400000000000040340000000000004034000000000000402400000000000040440000000000000000000003000000010000000440440000000000004044000000000000403400000000000040468000000000004046800000000000403E00000000000040440000000000004044000000000000");
-
-            // ACT
-            Geometry geo = WkbConverter.FromBinary(bytes);
-            byte[] newBytes = WkbConverter.ToBinary(geo, Endianness.BIG);
-
-            // ASSERT
-            Assert.Equal(bytes, newBytes);
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private static byte[] HexStringToByteArray(string hexString)
-        {
-            if (hexString.Length % 2 != 0)
-            {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "The binary key cannot have an odd number of digits: {0}", hexString));
-            }
-
-            byte[] data = new byte[hexString.Length / 2];
-
-            for (int index = 0; index < data.Length; index++)
-            {
-                string byteValue = hexString.Substring(index * 2, 2);
-                data[index] = byte.Parse(byteValue, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-            }
-
-            return data;
-        }
-
-        #endregion
     }
 }

@@ -1,22 +1,33 @@
 ﻿using BAMCIS.GeoJSON.Serde;
+using Extensions.ArrayExtensions;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BAMCIS.GeoJSON
 {
+
+
     /// <summary>
-    /// A polygon is formed with 1 or more linear rings, which are an enclosed LineString
+    /// A polygon is formed with 1 or more linear rings, which are an enclosed LineString.
+    /// 
+    /// 
+    /// For spatial operations, check:
+    ///     https://www.topcoder.com/thrive/articles/Geometry%20Concepts%20part%203:%20Using%20Geometry%20in%20Topcoder%20Problems
     /// </summary>
     [JsonConverter(typeof(PolygonConverter))]
-    public class Polygon : Geometry
+    public class Polygon : Geometry,
+                           IEquatable<Polygon>,
+                           IContains<Point>,
+                           ITouch<Point>,
+                           IPolygon<LineSegment>, 
+                           IPolygon<LineString>,
+                           IEnumerable<LinearRing>
+
     {
-        #region Private Fields
-
-        private IEnumerable<LinearRing> _coordinates;
-
-        #endregion
+   
 
         #region Public Properties
 
@@ -27,11 +38,36 @@ namespace BAMCIS.GeoJSON
         /// exterior ring bounds the surface, and the interior rings(if
         /// present) bound holes within the surface.
         /// </summary>
-        [JsonProperty(PropertyName = "coordinates")]
-        public IEnumerable<LinearRing> Coordinates { 
+        [JsonProperty(PropertyName = "LinearRings")]
+        [JsonIgnore]
+        public IEnumerable<LinearRing> LinearRings { get; set; } 
+           
+
+        /// <summary>
+        /// The points that represent the linearRings of the polygon
+        /// </summary>
+        [JsonProperty(PropertyName = "Points")]
+        [JsonIgnore]
+        public IEnumerable<Point> Points
+        {
             get
             {
-                return this._coordinates;
+                return this.LinearRings.SelectMany(lineRing => lineRing.Points).ToList();
+            }
+        }
+
+        [JsonProperty(PropertyName = "BoundingBox")]
+        [JsonIgnore]
+        public override Rectangle BoundingBox
+        {
+            get
+            {
+
+                if (this._BoundingBox == null)
+                {
+                    this._BoundingBox = FetchBoundingBox();
+                }
+                return this._BoundingBox;
             }
         }
 
@@ -44,15 +80,61 @@ namespace BAMCIS.GeoJSON
         /// </summary>
         /// <param name="coordinates">The linear rings that make up the polygon</param>
         [JsonConstructor]
-        public Polygon(IEnumerable<LinearRing> coordinates, IEnumerable<double> boundingBox = null) : base(GeoJsonType.Polygon, coordinates.Any(x => x.IsThreeDimensional()), boundingBox)
+        public Polygon(IEnumerable<LinearRing> linearRings) : base(GeoJsonType.Polygon, linearRings.Any(x => x.IsThreeDimensional()))
         {
-            this._coordinates = coordinates ?? throw new ArgumentNullException("coordinates");
+            this.LinearRings = linearRings ?? throw new ArgumentNullException("Points");
 
-            if (!this.Coordinates.Any())
+            if (!this.LinearRings.Any())
             {
-                throw new ArgumentOutOfRangeException("coordinates", "A polygon must have at least 1 linear ring.");
+                throw new ArgumentOutOfRangeException("Points", "A polygon must have at least 1 linear ring.");
             }
         }
+
+        
+
+        /// <summary>
+        /// Creates a new Polygon
+        /// </summary>
+        /// <param name="coordinates">The linear rings that make up the polygon</param>
+        
+        public Polygon(LinearRing linearRing) : base(GeoJsonType.Polygon, linearRing.Any(x => x.HasElevation()))
+        {
+            this.LinearRings = new List<LinearRing> { linearRing } ?? throw new ArgumentNullException("Points");
+
+            if (!this.LinearRings.Any())
+            {
+                throw new ArgumentOutOfRangeException("Points", "A polygon must have at least 1 linear ring.");
+            }
+        }
+
+        
+        public Polygon(IEnumerable<IEnumerable<IEnumerable<Coordinate>>> coordinates) : this(CoordinatesToLinearRings(coordinates))
+        {
+
+        }
+
+        public static IEnumerable<LinearRing> CoordinatesToLinearRings(IEnumerable<IEnumerable<IEnumerable<Coordinate>>> coordinates)
+        {
+            var rings = new List<LinearRing>();
+
+            foreach (var lineRing in coordinates)
+            {
+                var positionsOfASingleLineRing = new List<Coordinate>();
+
+                foreach (var lineSegments in lineRing)
+                {
+                    List<Coordinate> posWithinALineSegment = lineSegments.ToList();
+                    positionsOfASingleLineRing.AddRange(posWithinALineSegment);
+                }
+
+                var ring = new LinearRing(LineSegment.PositionsToLineSegments(positionsOfASingleLineRing));
+
+                rings.Add(ring);
+            }
+
+            return rings;
+        }
+
 
         #endregion
 
@@ -63,19 +145,8 @@ namespace BAMCIS.GeoJSON
         /// leaving just 1 linear ring in the coordinates.
         /// </summary>
         /// <returns>Returns true if the polygon had more than linear ring and false if there were no linear rings to remove</returns>
-        public bool RemoveInteriorRings()
-        {
-            // If there is more than element
-            if (this._coordinates != null && this._coordinates.Skip(1).Any())
-            {
-                this._coordinates = this._coordinates.Take(1);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        
+        #region Comparable Methods
 
         /// <summary>
         /// Deserializes the json into a Polygon
@@ -99,39 +170,58 @@ namespace BAMCIS.GeoJSON
                 return false;
             }
 
-            Polygon other = (Polygon)obj;
+            var other = obj as Polygon;
 
-            bool bBoxEqual = true;
+            if (other == null) 
+            { 
+                return false; 
+            }
+
+            return this.Equals(other);
+            
+        }
+
+
+        public bool Equals(Polygon other)
+        {
+            bool bBoxEqual;
 
             if (this.BoundingBox != null && other.BoundingBox != null)
             {
-                bBoxEqual = this.BoundingBox.SequenceEqual(other.BoundingBox);
+                bBoxEqual = this.BoundingBox.Equals(other.BoundingBox);
             }
             else
             {
-                bBoxEqual = (this.BoundingBox == null && other.BoundingBox == null);
+                bBoxEqual = ( this.BoundingBox == null && other.BoundingBox == null );
             }
 
-            bool coordinatesEqual = true;
-
-            if (this.Coordinates != null && other.Coordinates != null)
+            if (bBoxEqual)
             {
-                coordinatesEqual = this.Coordinates.SequenceEqual(other.Coordinates);
+                bool coordinatesEqual = true;
+
+                if (this.LinearRings != null && other.LinearRings != null)
+                {
+                    coordinatesEqual = this.LinearRings.SequenceEqual(other.LinearRings);
+                }
+                else
+                {
+                    coordinatesEqual = ( this.LinearRings == null && other.LinearRings == null );
+                }
+
+                return coordinatesEqual && this.Type == other.Type;
             }
+
             else
             {
-                coordinatesEqual = (this.Coordinates == null && other.Coordinates == null);
+                return false;
             }
-
-            return this.Type == other.Type &&
-                coordinatesEqual &&
-                bBoxEqual;
         }
 
         public override int GetHashCode()
         {
-            return Hashing.Hash(this.Type, this.Coordinates, this.BoundingBox);
+            return Hashing.Hash(this.Type, this.LinearRings, this.BoundingBox);
         }
+
 
         public static bool operator ==(Polygon left, Polygon right)
         {
@@ -153,6 +243,252 @@ namespace BAMCIS.GeoJSON
             return !(left == right);
         }
 
-        #endregion
+        #endregion Comparable Methods
+
+
+        #region Enumeration
+
+        public IEnumerator<LinearRing> GetEnumerator()
+        {
+            foreach (var line in LinearRings)
+            {
+                yield return line;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion Enumeration
+
+
+        #region Topological Operations
+
+        public Rectangle FetchBoundingBox()
+        {
+            double MinLongitude = double.MaxValue;
+
+            double MaxLongitude = double.MinValue;
+
+            double MinLatitude = double.MaxValue;
+
+            double MaxLatitude = double.MinValue;
+
+
+            foreach (LinearRing line in this.LinearRings)
+            {
+                if (MinLongitude > line.BoundingBox.MinLongitude)
+                {
+                    MinLongitude = line.BoundingBox.MinLongitude;
+                }
+
+                if (MaxLongitude < line.BoundingBox.MaxLongitude)
+                {
+                    MaxLongitude = line.BoundingBox.MaxLongitude;
+                }
+
+                if (MinLatitude > line.BoundingBox.MinLatitude)
+                {
+                    MinLatitude = line.BoundingBox.MinLatitude;
+                }
+
+                if (MaxLatitude < line.BoundingBox.MaxLatitude)
+                {
+                    MaxLatitude = line.BoundingBox.MaxLatitude;
+                }
+            }
+
+            var LL = new Point(new Coordinate(MinLongitude, MinLatitude));
+
+            var LR = new Point(new Coordinate(MaxLongitude, MinLatitude));
+
+            var UL = new Point(new Coordinate(MinLongitude, MaxLatitude));
+
+            var UR = new Point(new Coordinate(MaxLongitude, MaxLatitude));
+
+            return new Rectangle(LL, LR, UL, UR);
+
+        }
+
+        public void RemoveInteriorRings()
+        {
+            // If there is more than element
+
+
+            if (this.LinearRings != null && this.LinearRings.Count()>1)
+            {
+                this.LinearRings = new List<LinearRing> { this.LinearRings.First() };
+            }
+        }
+
+        public LinearRing OuterRing()
+        {
+            return this.LinearRings.First();
+        }
+
+        public bool Contains(Point point, double eps = double.MinValue * 100)
+        {
+
+            if (!this.BoundingBox.Contains(point))
+            {
+                return false;
+            }
+
+            int numberOfRingsThatContainPoint = 0;
+            bool firstRingContainsPoint = false;
+
+            int ringCounter = 0;
+            foreach (var ring in LinearRings)
+            {
+                if(ring.Contains(point))
+                {
+                    if (ringCounter == 0)
+                    {
+                        firstRingContainsPoint = true;
+                    }
+                    else
+                    {
+                        // No inner ring can contain point. Only the first ring (i.e., the outer ring) can contain a point
+                        // for a polygon to be considered as containing that point.
+                        return false;
+                    }
+
+                    numberOfRingsThatContainPoint++;
+                }
+
+                ringCounter++;
+            }
+
+            if (firstRingContainsPoint)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            } 
+        }
+
+
+        public bool Intersects(Point point)
+        {
+            return false;
+        }
+
+        public bool Touches(Point point, double eps = double.MinValue * 100)
+        {
+        
+            foreach(LinearRing lineRing in LinearRings)
+            {
+                if (lineRing.Touches(point, eps))
+                {
+                    return true;
+                }
+                else
+                { 
+                    continue;
+                }
+            }
+            return false;
+        }
+
+        public bool Touches(LineString lineString, double eps = double.MinValue * 100)
+        {
+            foreach (LinearRing lineRing in LinearRings)
+            {
+                if (lineRing.Touches(lineString, eps))
+                {
+                    return true;
+                }
+                else
+                { }
+            }
+            return false;
+        }
+
+
+        public bool Contains(LineString lineString, double eps = double.MinValue * 100)
+        {
+            return lineString.Points.All(l => this.Contains(l));
+        }
+
+        /// <summary>
+        /// In order to check if a lineSegment is within a polygon, one must do three steps:
+        ///     1) sort the edges of the polygon in clock-wise (or counter clock-wise) order
+        ///     2) evaluate the cross-product of (V[i+1] - V[i]) x (P - V[i]) for every i-esimal vertice within the polygon
+        ///     3) compare the sign of all these cross-products. if they are all of same sign (e.g., all positive, or all negative),
+        ///         then point P is within the polygon.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="eps"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public bool Contains(LineSegment lineSegment, double eps = double.MinValue * 100)
+        {
+            return lineSegment.Points.All(p => this.Contains(p, eps));
+        }
+
+        public bool Intersects(LineSegment lineSegment, double eps = double.MinValue * 100)
+        {
+            int pointWithin = 0;
+            foreach (Point point in lineSegment.Points)
+            {
+                if (point.Touches(this, eps))
+                {
+                    pointWithin ++;
+                }
+
+            }
+
+            if (pointWithin > 1 || pointWithin < 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public bool Intersects(LineString lineString, double eps = double.MinValue * 100)
+        {
+            
+            foreach (LineSegment lineSeg in lineString.LineSegments)
+            {
+                if (this.Intersects(lineSeg, eps))
+                {
+                    return true;
+                }
+
+            }
+
+            return true;
+            
+        }
+
+        /// <summary>
+        /// Return The Points that compose the outer-ring of the polygon.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Point> FetchEdge()
+        {
+            return LinearRings.First().Points;
+        }
+
+        internal bool Within(LinearRing linearRing)
+        {
+            return linearRing.Contains(this);
+        }
+        internal bool Within(Polygon polygon)
+        {
+            return polygon.Contains(this.LinearRings.First());
+        }
+
+        #endregion Topological Operations
+
+
+        #endregion Public Methods
     }
 }

@@ -1,15 +1,14 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BAMCIS.GeoJSON.Serde
 {
-    /// <summary>
-    /// Converts a MultiLineString GeoJSON object to and from JSON
-    /// </summary>
-    public class MultiLineStringConverter : JsonConverter
+    public class LineStringConverter : JsonConverter
     {
         #region Public Properties
 
@@ -38,11 +37,11 @@ namespace BAMCIS.GeoJSON.Serde
         {
             JObject token = JObject.Load(reader);
 
-            IEnumerable<IEnumerable<Coordinate>> coordinates = token.GetValue("Coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<IEnumerable<Coordinate>>>(serializer);
+            var coordinates = token.GetValue("coordinates", StringComparison.OrdinalIgnoreCase).ToObject<IEnumerable<Coordinate>>(serializer);
 
-            List<LineString> lineStrings = coordinates.Select(c => LineSegment.CoordinatesToLineString(c)).ToList();
+            var lineString = new LineString(coordinates.Select(c => c.ToPoint()));
 
-            return new MultiLineString(lineStrings);
+            return lineString;
         }
 
         /// <summary>
@@ -53,15 +52,15 @@ namespace BAMCIS.GeoJSON.Serde
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            MultiLineString mls = (MultiLineString)value;
+            var lineString = (LineString) value;
 
             JToken.FromObject(new
             {
-                type = mls.Type,
-                coordinates = mls.LineStrings.Select(x => x.Points.Select(p => p.Coordinates))
+                type = lineString.Type,
+                coordinates = lineString.Points.Select(p => p.Coordinates).ToList()
             }).WriteTo(writer);
         }
 
-        #endregion
+        #endregion Public Methods
     }
 }

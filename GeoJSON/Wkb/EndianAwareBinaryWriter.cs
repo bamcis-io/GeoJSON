@@ -102,9 +102,9 @@ namespace BAMCIS.GeoJSON.Wkb
 
         public void Write(UInt64 value, Endianness endianness) => this.WriteForEndianness(BitConverter.GetBytes(value), endianness);
 
-        public void Write(bool value, Endianness endianness) => this.WriteForEndianness(BitConverter.GetBytes(value), endianness);
+        public void Write(bool value, Endianness endianness) => this.WriteForEndianness(BitConverter.GetBytes((bool)value), endianness);
 
-        public void Write(sbyte value, Endianness endianness) => this.WriteForEndianness(BitConverter.GetBytes(value), endianness);
+        public void Write(sbyte value, Endianness endianness) => this.WriteForEndianness(BitConverter.GetBytes(value.ToString()[0] ), endianness);
 
         public void WriteEndianness() => WriteEndianness(this._endianness);
 
