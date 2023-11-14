@@ -125,6 +125,28 @@ byte[] bytes = HexStringToByteArray("000000000140000000000000004010000000000000"
 Point point = WkbConverter.FromBinary<Point>(bytes);
 ```
 
+
+## Topological Operations
+
+### Example 1
+
+```csharp
+    var point = new Point(5, 2);
+    
+    var coordinates = new List<Coordinate> { new Coordinate(1, 1) ,
+                                                         new Coordinate(1, 4) ,
+                                                         new Coordinate(4, 4) ,
+                                                         new Coordinate(4, 1) ,
+                                                         new Coordinate(1, 1)
+                                                        };
+    var linearRing = new LinearRing(coordinates);
+    
+    var polygon = new Polygon(linearRing);
+    
+    
+    regularPolygon.Contains(point)
+```
+
 ### Usage Notes
 
 Each of the 9 GeoJSON types: **Feature**, **FeatureCollection**, **GeometryCollection**, **LineString**, **MultiLineString**, **MultiPoint**, **MultiPolygon**, **Point**, and **Polygon** all have convenience methods ToJson() and FromJson() to make serialization and deserialization easy.
